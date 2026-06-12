@@ -263,25 +263,38 @@ function SkinsTab({ round, course }) {
   const { data, meta } = useStore()
   const { holes, totals, carryLeft } = skinsForRound(data, round.id, meta, round)
   const rank = Object.entries(totals).sort((a, b) => b[1] - a[1])
+  const claimed = rank.reduce((n, [, c]) => n + c, 0)
+  const val = meta.skinsValue || 0
   return (
     <div>
       <div className="card">
-        <h3>Round skins {meta.skinsValue ? `($${meta.skinsValue} each)` : ''}</h3>
+        <h3>Round skins leaderboard</h3>
         {rank.length === 0
-          ? <p className="hint">Nothing claimed yet. Lowest unique {meta.skinsNet !== false ? 'net' : 'gross'} score takes the hole; ties carry the pot.</p>
+          ? <p className="hint">Nothing claimed yet &mdash; first outright low {meta.skinsNet !== false ? 'net' : 'gross'} score on a hole opens the account.</p>
           : (
             <table className="table"><tbody>
               {rank.map(([pid, n]) => (
                 <tr key={pid}>
                   <td>{playerById(meta, pid)?.name}</td>
                   <td className="num">{n} skin{n === 1 ? '' : 's'}</td>
-                  <td className="num">{meta.skinsValue ? `$${n * meta.skinsValue}` : ''}</td>
+                  <td className="num">{val ? `$${n * val}` : ''}</td>
                 </tr>
               ))}
             </tbody></table>
           )}
-        {carryLeft > 0 && <p className="hint">{carryLeft} skin{carryLeft === 1 ? '' : 's'} still riding on the next decided hole.</p>}
-        <p className="hint">Live board &mdash; updates as cards come in.</p>
+        <p className="hint">
+          {claimed} of 18 skins claimed{carryLeft > 0 ? ` \u00b7 ${carryLeft + 1} skins riding on the next outright winner` : ''} &mdash; live board, updates as cards come in.
+        </p>
+      </div>
+      <div className="card">
+        <h3>{'\u{1F4B0}'} How skins work</h3>
+        <ul className="rules">
+          <li>Every hole puts <strong>1 skin on the line</strong>{val ? <> &mdash; each worth <strong>${val}</strong></> : null}. 18 per round, every round, all {meta.players.length} of you in.</li>
+          <li>Lowest <strong>{meta.skinsNet !== false ? 'NET' : 'GROSS'} score wins the hole outright</strong> to take its skin. Any tie for low = nobody wins.</li>
+          <li>Tied skins don&rsquo;t vanish &mdash; they <strong>ride onto the next hole</strong>. Push holes 3 and 4, and hole 5 is suddenly worth 3 skins{val ? ` ($${3 * val})` : ''}.</li>
+          <li>Skins still riding when the round ends die there. Settle up at the bar.</li>
+          <li>Benched players can post a card and steal skins too.</li>
+        </ul>
       </div>
       <div className="card">
         <table className="table">

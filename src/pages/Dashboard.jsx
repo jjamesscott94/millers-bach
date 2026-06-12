@@ -55,10 +55,11 @@ export default function Dashboard() {
       </div>
 
       <div>
-      <h2 className="sectionh">Skins leaderboard {meta.skinsValue ? `($${meta.skinsValue} a skin)` : ''}</h2>
+      <h2 className="sectionh">Skins leaderboard</h2>
       <div className="card">
+        <p className="hint">1 skin per hole{meta.skinsValue ? `, $${meta.skinsValue} each` : ''} &mdash; 18 up for grabs every round. Lowest net wins a hole outright to claim it; ties stack the pot onto the next hole.</p>
         {skinsRank.length === 0 ? (
-          <p className="hint">No skins claimed yet. Lowest unique net score on a hole takes it; ties carry over.</p>
+          <p className="hint">No skins claimed yet.</p>
         ) : (
           <table className="table">
             <tbody>

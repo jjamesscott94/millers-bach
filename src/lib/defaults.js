@@ -91,7 +91,7 @@ export const GAMES = [
 export const RULES = [
   'Handicaps come from the trip sheet (Andrew and Pauley start at 20). Only YOU can edit your own \u2014 Me tab.',
   'Match play: net best-ball in the pairs rounds, net singles in the finale. Full handicap strokes by hole index.',
-  'Skins: lowest unique NET score on a hole takes the skin. Ties carry the pot to the next hole.',
+  'Skins: every hole is worth 1 skin ($5 each, 18 per round). Lowest NET score wins the hole OUTRIGHT to take it \u2014 any tie and the skin rides onto the next hole, stacking the pot.',
   'Both squads carry 7 men \u2014 each team benches one for the pairs rounds, everybody plays Sunday singles. Benched men still drink (and can still post a card for skins).',
   'Groups rotate every round \u2014 new partner in Round 2, a fresh opponent in Sunday singles. Make new friends.',
   'Gimmies inside the leather, unless money or matches are on the line.',
