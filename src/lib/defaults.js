@@ -91,7 +91,7 @@ export const GAMES = [
 export const RULES = [
   'Handicaps come from the trip sheet (Andrew and Pauley start at 20). Only YOU can edit your own \u2014 Me tab.',
   'Match play: net best-ball in the pairs rounds, net singles in the finale. Full handicap strokes by hole index.',
-  'Skins: opt in each round ($5 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
+  'Skins: opt in each round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
   'Both squads carry 7 men \u2014 each team benches one for the pairs rounds, everybody plays Sunday singles. Benched men still drink (and can still post a card for skins).',
   'Groups rotate every round \u2014 new partner in Round 2, a fresh opponent in Sunday singles. Make new friends.',
   'Gimmies inside the leather, unless money or matches are on the line.',
@@ -149,7 +149,7 @@ export const DEFAULT_META = {
   subtitle: 'Miller & His Mice Go to Scottsdale',
   dates: 'June 12\u201314, 2026',
   skinsValue: 5,
-  skinsBuyIn: 5,
+  skinsBuyIn: 10,
   skinsNet: true,
   teams: {
     A: { name: 'Team Miller', color: '#e3354d' },

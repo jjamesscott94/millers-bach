@@ -21,7 +21,7 @@ games, and bragging rights.
   everybody plays Sunday singles. The Commissioner sets benches and pairings.
 - **Handicaps** are seeded from the trip sheet (Andrew and Pauley had none
   listed, so they start at 20). Each man can edit only his own.
-- **Skins** are opt-in per round: $5 buy-in (tap "Buy in" on the round's
+- **Skins** are opt-in per round: $10 buy-in (tap "Buy in" on the round's
   Skins tab; cash settles at the bar). Every hole is 1 skin — lowest unique
   *net* score wins it, ties carry forward. Each round's pot (buy-ins ×
   entrants) splits across the skins won, all tracked automatically.
