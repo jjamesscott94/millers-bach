@@ -178,6 +178,29 @@ export function skinsTotalsAllRounds(data, meta) {
   return { totals, money }
 }
 
+// ---------- drink tracking ----------
+export function getDrinks(data, rid, pid) {
+  const d = data[`drinks:${rid}:${pid}`]
+  return Array.isArray(d) ? d : Array(18).fill(0)
+}
+
+// Per-round and weekend drink totals per player.
+export function drinkTotals(data, meta) {
+  const byRound = {}
+  const total = {}
+  for (const r of meta.rounds) {
+    byRound[r.id] = {}
+    for (const p of meta.players) {
+      const n = getDrinks(data, r.id, p.id).reduce((a, b) => a + (b || 0), 0)
+      if (n > 0) {
+        byRound[r.id][p.id] = n
+        total[p.id] = (total[p.id] || 0) + n
+      }
+    }
+  }
+  return { byRound, total }
+}
+
 export function fmtMoney(n) {
   const r = Math.round(n * 100) / 100
   return r % 1 === 0 ? `$${r}` : `$${r.toFixed(2)}`

@@ -1,7 +1,7 @@
 import React from 'react'
 import trophy from '../assets/trophy.png'
 import { useStore } from '../lib/store.jsx'
-import { cupTally, matchStatus, skinsTotalsAllRounds, skinsBuyIn, playerById, fmtMoney } from '../lib/engine.js'
+import { cupTally, matchStatus, skinsTotalsAllRounds, skinsBuyIn, drinkTotals, playerById, fmtMoney } from '../lib/engine.js'
 import { go } from '../App.jsx'
 
 export default function Dashboard() {
@@ -9,6 +9,8 @@ export default function Dashboard() {
   const tally = cupTally(data, meta)
   const { totals: skins, money } = skinsTotalsAllRounds(data, meta)
   const skinsRank = Object.entries(skins).sort((a, b) => b[1] - a[1])
+  const { total: drinks } = drinkTotals(data, meta)
+  const drinkRank = Object.entries(drinks).sort((a, b) => b[1] - a[1])
   const { A, B } = meta.teams
 
   return (
@@ -68,6 +70,24 @@ export default function Dashboard() {
                   <td>{playerById(meta, pid)?.name || pid}</td>
                   <td className="num">{n} skin{n === 1 ? '' : 's'}</td>
                   <td className="num">{money[pid] != null ? fmtMoney(money[pid]) : ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <h2 className="sectionh">Drink leaderboard</h2>
+      <div className="card">
+        {drinkRank.length === 0 ? (
+          <p className="hint">Nobody&rsquo;s logged a drink yet. Track them with the {'\u{1F37A}'} buttons on the scorecard &mdash; weekend totals stack up here.</p>
+        ) : (
+          <table className="table">
+            <tbody>
+              {drinkRank.map(([pid, n], i) => (
+                <tr key={pid}>
+                  <td>{i === 0 ? '\u{1F451} ' : ''}{playerById(meta, pid)?.name || pid}</td>
+                  <td className="num">{n} {'\u{1F37A}'}</td>
                 </tr>
               ))}
             </tbody>

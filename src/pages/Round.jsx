@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useStore } from '../lib/store.jsx'
-import { getScores, getHcp, matchStatus, skinsPool, skinsBuyIn, strokesOnHole, netScore, dots, playerById, fmtMoney } from '../lib/engine.js'
+import { getScores, getHcp, matchStatus, skinsPool, skinsBuyIn, strokesOnHole, netScore, dots, playerById, fmtMoney, getDrinks, drinkTotals } from '../lib/engine.js'
 import { go } from '../App.jsx'
 import { fmtPts } from './Dashboard.jsx'
 
@@ -42,7 +42,7 @@ export default function Round({ roundId, tab }) {
       {tab === 'score' && <ScoreTab key={round.id} round={round} course={course} />}
       {tab === 'matches' && <MatchesTab round={round} course={course} />}
       {tab === 'skins' && <SkinsTab round={round} course={course} />}
-      {tab === 'games' && <GamesTab />}
+      {tab === 'games' && <GamesTab round={round} />}
       {tab === 'comps' && <CompsTab key={round.id} round={round} course={course} />}
     </div>
   )
@@ -51,7 +51,7 @@ export default function Round({ roundId, tab }) {
 // ---------------- Scores ----------------
 
 function ScoreTab({ round, course }) {
-  const { data, meta, me, setScore, setSkinsIn } = useStore()
+  const { data, meta, me, setScore, setSkinsIn, addDrink } = useStore()
   const meInSkins = me ? data[`skinsin:${round.id}:${me.id}`] === true : true
   const groups = useMemo(() => {
     const gs = round.matches.map((m, i) => ({
@@ -117,17 +117,27 @@ function ScoreTab({ round, course }) {
             const hcp = getHcp(data, pid)
             const pops = strokesOnHole(hcp, course.si[hole])
             const net = netScore(gross, hcp, course.si[hole])
+            const drinks = getDrinks(data, round.id, pid)[hole] || 0
             return (
               <div key={pid} className="scorerow" style={{ '--c': meta.teams[p.team].color }}>
-                <div className="scorename">
-                  <span>{p.name}{p.groom ? ' \u{1F935}' : ''} <span className="popdots">{dots(pops)}</span></span>
-                  <span className="scoresub">hcp {hcp}{gross != null ? ` · net ${net}` : ''}</span>
-                  {gross != null && <ScoreFeed gross={gross} par={course.par[hole]} />}
+                <div className="scorerow-main">
+                  <div className="scorename">
+                    <span>{p.name}{p.groom ? ' \u{1F935}' : ''} <span className="popdots">{dots(pops)}</span></span>
+                    <span className="scoresub">hcp {hcp}{gross != null ? ` · net ${net}` : ''}</span>
+                    {gross != null && <ScoreFeed gross={gross} par={course.par[hole]} />}
+                  </div>
+                  <div className="stepper">
+                    <button className="stepbtn" onClick={() => setScore(round.id, pid, hole, gross == null ? null : gross - 1 < 1 ? null : gross - 1)}>&minus;</button>
+                    <span className={`stepval ${scoreClass(gross, course.par[hole])}`}>{gross ?? '\u2013'}</span>
+                    <button className="stepbtn" onClick={() => setScore(round.id, pid, hole, gross == null ? course.par[hole] : Math.min(15, gross + 1))}>+</button>
+                  </div>
                 </div>
-                <div className="stepper">
-                  <button className="stepbtn" onClick={() => setScore(round.id, pid, hole, gross == null ? null : gross - 1 < 1 ? null : gross - 1)}>&minus;</button>
-                  <span className={`stepval ${scoreClass(gross, course.par[hole])}`}>{gross ?? '\u2013'}</span>
-                  <button className="stepbtn" onClick={() => setScore(round.id, pid, hole, gross == null ? course.par[hole] : Math.min(15, gross + 1))}>+</button>
+                <div className="drinkrow">
+                  <span className="drinkcount">{'\u{1F37A}'} {drinks} drink{drinks === 1 ? '' : 's'} this hole</span>
+                  <span className="drinkbtns">
+                    <button className="drinkbtn" disabled={drinks === 0} onClick={() => addDrink(round.id, pid, hole, -1)}>&minus;</button>
+                    <button className="drinkbtn add" onClick={() => addDrink(round.id, pid, hole, 1)}>+</button>
+                  </span>
                 </div>
               </div>
             )
@@ -349,10 +359,55 @@ function SkinsTab({ round, course }) {
 
 // ---------------- Games ----------------
 
-function GamesTab() {
-  const { meta } = useStore()
+function GamesTab({ round }) {
+  const { data, meta } = useStore()
+  const { byRound, total } = drinkTotals(data, meta)
+  const roundTotals = byRound[round.id] || {}
+  const rank = Object.entries(roundTotals).sort((a, b) => b[1] - a[1])
+  const drinkers = meta.players.filter(p => (roundTotals[p.id] || 0) > 0)
   return (
     <div>
+      <div className="card">
+        <h3>{'\u{1F37B}'} Drink board &mdash; this round</h3>
+        {rank.length === 0
+          ? <p className="hint">Bone dry so far. Log drinks with the {'\u{1F37A}'} +/&minus; on each player&rsquo;s scorecard row &mdash; totals land here.</p>
+          : (
+            <table className="table">
+              <thead><tr><th>Player</th><th className="num">This round</th><th className="num">Weekend</th></tr></thead>
+              <tbody>
+                {rank.map(([pid, n]) => (
+                  <tr key={pid}>
+                    <td>{playerById(meta, pid)?.name}{rank[0][0] === pid && n > 0 ? ' \u{1F451}' : ''}</td>
+                    <td className="num">{n}</td>
+                    <td className="num">{total[pid]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+      </div>
+      {drinkers.length > 0 && (
+        <div className="card tablewrap">
+          <h3>Who drank where</h3>
+          <table className="table cardtable">
+            <thead>
+              <tr><th>Hole</th>{Array.from({ length: 18 }, (_, i) => <th key={i}>{i + 1}</th>)}<th>Tot</th></tr>
+            </thead>
+            <tbody>
+              {drinkers.map(p => {
+                const d = getDrinks(data, round.id, p.id)
+                return (
+                  <tr key={p.id}>
+                    <td className="namecell">{p.name}</td>
+                    {d.map((n, i) => <td key={i} className={n > 0 ? 'drank' : ''}>{n > 0 ? n : ''}</td>)}
+                    <td className="num">{roundTotals[p.id]}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
       <div className="card">
         <h3>{'\u{1F37A}'} Hole-by-hole drinking games</h3>
         <ol className="gamelist">

@@ -50,6 +50,11 @@ const v0 = await rows.nth(0).locator('.stepval').textContent()
 const v1 = await rows.nth(1).locator('.stepval').textContent()
 ok(`score entry works (${v0}, ${v1})`, v0 === '4' && v1 === '5')
 
+// Drink tracking: log one for the first player on this hole
+await rows.nth(0).locator('.drinkbtn.add').click()
+await page.waitForTimeout(800)
+ok('drink logging works', (await rows.nth(0).locator('.drinkcount').innerText()).includes('1 drink'))
+
 // Matches tab shows a live status
 await page.getByRole('button', { name: 'Matches' }).click()
 await page.waitForTimeout(500)
@@ -74,6 +79,8 @@ ok('skins drop-out toggles back', await page.getByRole('button', { name: /buy in
 await page.getByRole('button', { name: 'Games', exact: true }).click()
 await page.waitForTimeout(500)
 ok('18 games listed', (await page.locator('.gamelist li').count()) === 18)
+const boardTxt = await page.locator('.card', { hasText: 'Drink board' }).innerText()
+ok('drink board shows logged drink', boardTxt.includes('Luke') && !boardTxt.includes('Bone dry'))
 
 // Comps tab
 await page.getByRole('button', { name: 'Comps', exact: true }).click()

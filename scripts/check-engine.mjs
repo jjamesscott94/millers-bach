@@ -1,5 +1,5 @@
 // Quick sanity checks for the scoring engine. Run: node scripts/check-engine.mjs
-import { strokesOnHole, matchStatus, skinsForRound, skinsPool, fmtMoney, cupTally } from '../src/lib/engine.js'
+import { strokesOnHole, matchStatus, skinsForRound, skinsPool, fmtMoney, cupTally, drinkTotals } from '../src/lib/engine.js'
 import { DEFAULT_META } from '../src/lib/defaults.js'
 
 let failures = 0
@@ -83,6 +83,14 @@ check('fmtMoney', [fmtMoney(65), fmtMoney(21.666666)], ['$65', '$21.67'])
 // Nobody entered -> no skins awarded no matter the scores
 const sk0 = skinsForRound({ ...data4, 'skinsin:r1:p1': false, ...Object.fromEntries(entrants.map(p => [`skinsin:r1:${p}`, false])) }, 'r1', meta, r1)
 check('no entrants, no skins', sk0.totals, {})
+
+// Drink totals: p1 drinks on r1 holes 1+3 and r2 hole 2; p2 stays dry
+const data5 = {}
+data5['drinks:r1:p1'] = [2, 0, 1, ...Array(15).fill(0)]
+data5['drinks:r2:p1'] = [0, 3, ...Array(16).fill(0)]
+const dt = drinkTotals(data5, meta)
+check('drink round totals', dt.byRound.r1, { p1: 3 })
+check('drink weekend total', dt.total, { p1: 6 })
 
 // cup tally over the full default meta with data: only r1m1 decided (10&8 from data)
 // 3 + 3 + 7 matches = 13 points, first to 7

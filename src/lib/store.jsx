@@ -137,6 +137,13 @@ export function StoreProvider({ children }) {
     write(`skinsin:${rid}:${pid}`, !!isIn)
   }, [write])
 
+  const addDrink = useCallback((rid, pid, holeIdx, delta) => {
+    const cur = dataRef.current?.[`drinks:${rid}:${pid}`]
+    const arr = Array.isArray(cur) ? [...cur] : Array(18).fill(0)
+    arr[holeIdx] = Math.max(0, (arr[holeIdx] || 0) + delta)
+    write(`drinks:${rid}:${pid}`, arr)
+  }, [write])
+
   const setComp = useCallback((rid, kind, holeIdx, entry) => {
     const cur = dataRef.current?.[`comps:${rid}`] || { ctp: {}, ld: {} }
     const next = structuredClone(cur)
@@ -154,7 +161,7 @@ export function StoreProvider({ children }) {
   const value = {
     data: data || {}, meta, session, online, pending, refresh,
     login, logout, unlockAdmin, forgotPin,
-    setScore, setHcp, setPin, resetPin, setAdminPin, updateMeta, setComp, setSkinsIn, clearRoundScores,
+    setScore, setHcp, setPin, resetPin, setAdminPin, updateMeta, setComp, setSkinsIn, addDrink, clearRoundScores,
     me: session ? meta.players.find(p => p.id === session.pid) : null,
     isAdmin: !!session?.admin,
   }
