@@ -21,7 +21,7 @@ check('hcp9 SI10', strokesOnHole(9, 10), 0)
 
 const meta = DEFAULT_META
 const r1 = meta.rounds[0]
-const course = meta.courses.greyhawk
+const course = meta.courses.raptor
 const data = {}
 const everyone = meta.players.map(p => p.id)
 // all 13 at hcp 20
@@ -70,8 +70,9 @@ check('skin totals', sk.totals, { p1: 1, p2: 2 })
 check('skin pending h4', sk.holes[3].state, 'pending')
 
 // cup tally over the full default meta with data: only r1m1 decided (10&8 from data)
+// 3 + 3 + 7 matches = 13 points, first to 7
 const tally = cupTally(data, meta)
-check('cup tally', { A: tally.solid.A, B: tally.solid.B, total: tally.total, toWin: tally.toWin }, { A: 1, B: 0, total: 12, toWin: 6.5 })
+check('cup tally', { A: tally.solid.A, B: tally.solid.B, total: tally.total, toWin: tally.toWin }, { A: 1, B: 0, total: 13, toWin: 7 })
 
 if (failures) { console.error(`\n${failures} failure(s)`); process.exit(1) }
 console.log('\nAll engine checks passed.')

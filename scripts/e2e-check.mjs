@@ -19,17 +19,18 @@ await page.goto(URL, { waitUntil: 'networkidle' })
 ok('title', (await page.title()).includes('Miller Cup'))
 await page.waitForTimeout(1500)
 
-// Login screen lists all 13 players
+// Login screen lists all 14 players
 const players = await page.locator('.login-player').count()
-ok(`login shows 13 players (got ${players})`, players === 13)
+ok(`login shows 14 players (got ${players})`, players === 14)
 ok('Luke Miller present', await page.getByText('Luke Miller').first().isVisible())
 
-// Claim a profile (use Player 13 to avoid claiming Luke's slot)
-await page.locator('.login-player', { hasText: 'Player 13' }).click()
+// Claim a profile (use Andrew to avoid claiming Luke's slot)
+await page.locator('.login-player', { hasText: 'Andrew' }).click()
 await page.locator('input[type=password]').fill('9876')
 await page.getByRole('button', { name: /claim profile|log in/i }).click()
 await page.waitForTimeout(2000)
 ok('dashboard scoreboard visible', await page.locator('.scoreboard').isVisible())
+ok('masthead shows', await page.locator('.masthead-title').isVisible())
 ok('rounds listed', (await page.locator('.roundcard').count()) === 3)
 
 // Enter scores on Round 1

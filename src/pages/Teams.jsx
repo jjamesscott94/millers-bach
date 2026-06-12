@@ -7,7 +7,7 @@ export default function Teams() {
   const { data, meta, isAdmin } = useStore()
   return (
     <div>
-      <header className="hero"><h1>Teams</h1><p>7 on {meta.teams.A.name} &mdash; one man rides the bench each round.</p></header>
+      <header className="hero"><h1>Teams</h1><p>Seven a side &mdash; each squad benches a man in the pairs rounds, everybody plays Sunday singles.</p></header>
       {['A', 'B'].map(tid => {
         const team = meta.teams[tid]
         const roster = meta.players.filter(p => p.team === tid)

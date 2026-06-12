@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useStore } from '../lib/store.jsx'
-import { playerById } from '../lib/engine.js'
-import { API_BASE } from '../lib/defaults.js'
+import { API_BASE, par3s, longestPar5 } from '../lib/defaults.js'
 
 export default function Admin() {
   const { isAdmin } = useStore()
@@ -59,15 +58,39 @@ function LineupsEditor() {
       <p className="hint">Pick who sits each round (the 7-man squad subs one out), then set the pairings.</p>
       {meta.rounds.map((round, ri) => (
         <div key={round.id} className="adminround">
-          <h4>{round.name} <span className="hint">({round.format === 'fourball' ? '2v2 best ball ×3' : 'singles ×6'})</span></h4>
-          <label className="lbl">Sitting out</label>
+          <h4>{round.name} <span className="hint">({round.format === 'fourball' ? '2v2 best ball \u00d73' : `singles \u00d7${round.matches.length}`})</span></h4>
+          <label className="lbl">Course</label>
           <select
-            value={round.sitting?.[0] || ''}
-            onChange={e => updateMeta(m => { m.rounds[ri].sitting = e.target.value ? [e.target.value] : []; return m })}
+            value={round.course}
+            onChange={e => updateMeta(m => {
+              const r = m.rounds[ri]
+              r.course = e.target.value
+              const c = m.courses[r.course]
+              r.ctpHoles = par3s(c)
+              r.ldHole = longestPar5(c)
+              return m
+            })}
           >
-            <option value="">Nobody</option>
-            {meta.players.map(p => <option key={p.id} value={p.id}>{p.name} ({meta.teams[p.team].name})</option>)}
+            {Object.entries(meta.courses).map(([cid, c]) => <option key={cid} value={cid}>{c.name}</option>)}
           </select>
+          <div className="row">
+            {['A', 'B'].map(tid => (
+              <span key={tid} className="benchpick">
+                <label className="lbl">Benched ({meta.teams[tid].name})</label>
+                <select
+                  value={round.sitting?.find(pid => meta.players.find(p => p.id === pid)?.team === tid) || ''}
+                  onChange={e => updateMeta(m => {
+                    const keep = (m.rounds[ri].sitting || []).filter(pid => m.players.find(p => p.id === pid)?.team !== tid)
+                    m.rounds[ri].sitting = e.target.value ? [...keep, e.target.value] : keep
+                    return m
+                  })}
+                >
+                  <option value="">Nobody</option>
+                  {meta.players.filter(p => p.team === tid).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              </span>
+            ))}
+          </div>
           {round.matches.map((match, mi) => (
             <div key={match.id} className="adminmatch">
               <span className="lbl">Match {mi + 1}</span>

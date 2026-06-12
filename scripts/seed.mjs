@@ -30,7 +30,7 @@ await put('meta', DEFAULT_META)
 await put('prof:admin', { pinHash: sha256('admin:1313') })
 
 for (const p of PLAYERS) {
-  await put(`prof:${p.id}`, { hcp: 20 })
+  await put(`prof:${p.id}`, { hcp: p.hcp ?? 20 })
   for (const r of DEFAULT_META.rounds) {
     await put(`scores:${r.id}:${p.id}`, Array(18).fill(null))
   }
