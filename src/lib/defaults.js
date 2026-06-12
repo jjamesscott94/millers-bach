@@ -51,7 +51,7 @@ export const PLAYERS = [
   { id: 'p5', name: 'Connor', team: 'A', hcp: 25 },
   { id: 'p6', name: 'Ryan', team: 'A', hcp: 13 },
   { id: 'p7', name: 'Pauley', team: 'A', hcp: 20 },
-  { id: 'p8', name: 'John', team: 'B', hcp: 11 },
+  { id: 'p8', name: 'John', team: 'B', hcp: 8 },
   { id: 'p9', name: 'Matt Collins', team: 'B', hcp: 11 },
   { id: 'p10', name: 'Nick', team: 'B', hcp: 25 },
   { id: 'p11', name: 'Noodle', team: 'B', hcp: 19 },
