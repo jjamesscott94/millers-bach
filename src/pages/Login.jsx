@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import trophy from '../assets/trophy.png'
 import { useStore } from '../lib/store.jsx'
 
 export default function Login() {
@@ -23,7 +24,7 @@ export default function Login() {
   return (
     <div className="login">
       <div className="login-hero">
-        <div className="login-trophy">{'\u{1F3C6}'}</div>
+        <div className="login-trophy"><img src={trophy} alt="The Miller Cup trophy" /></div>
         <h1>{meta.eventName}</h1>
         <p>{meta.subtitle}</p>
         <p className="login-dates">{meta.dates}</p>

@@ -1,4 +1,5 @@
 import React from 'react'
+import trophy from '../assets/trophy.png'
 import { useStore } from '../lib/store.jsx'
 import { cupTally, matchStatus, skinsTotalsAllRounds, playerById } from '../lib/engine.js'
 import { go } from '../App.jsx'
@@ -19,7 +20,7 @@ export default function Dashboard() {
           {tally.live.A !== tally.solid.A && <div className="sb-proj">{fmtPts(tally.live.A)} projected</div>}
         </div>
         <div className="sb-mid">
-          <div className="sb-cup">{'\u{1F3C6}'}</div>
+          <div className="sb-cup"><img src={trophy} alt="" /></div>
           <div className="sb-towin">first to {fmtPts(tally.toWin)}</div>
         </div>
         <div className="sb-team" style={{ '--c': B.color }}>

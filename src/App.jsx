@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import trophy from './assets/trophy.png'
 import { useStore } from './lib/store.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
@@ -52,7 +53,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="masthead">
-        <div className="masthead-rule" />
+        <img className="masthead-trophy" src={trophy} alt="The Miller Cup trophy" />
         <div className="masthead-title">{meta.eventName}</div>
         <div className="masthead-kicker">Scottsdale, Ariz. &middot; {meta.dates}</div>
       </header>
