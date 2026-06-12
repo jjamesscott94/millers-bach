@@ -79,6 +79,16 @@ export function StoreProvider({ children }) {
     localStorage.removeItem(SESSION_KEY)
   }, [])
 
+  // Forgot PIN: honor-system self-service reset from the login screen.
+  // Overwrites the stored hash with a new one and logs the player in.
+  const forgotPin = useCallback(async (pid, pin) => {
+    const prof = dataRef.current?.[`prof:${pid}`] || {}
+    write(`prof:${pid}`, { ...prof, pinHash: await sha256(`${pid}:${pin}`) })
+    const s = { pid }
+    setSession(s); localStorage.setItem(SESSION_KEY, JSON.stringify(s))
+    return { ok: true }
+  }, [write])
+
   const unlockAdmin = useCallback(async (pin) => {
     const hash = await sha256(`admin:${pin}`)
     const stored = dataRef.current?.['prof:admin']?.pinHash
@@ -139,7 +149,7 @@ export function StoreProvider({ children }) {
 
   const value = {
     data: data || {}, meta, session, online, pending, refresh,
-    login, logout, unlockAdmin,
+    login, logout, unlockAdmin, forgotPin,
     setScore, setHcp, setPin, resetPin, setAdminPin, updateMeta, setComp, clearRoundScores,
     me: session ? meta.players.find(p => p.id === session.pid) : null,
     isAdmin: !!session?.admin,

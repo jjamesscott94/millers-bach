@@ -30,6 +30,8 @@ games, and bragging rights.
 ## How players use it
 
 1. Open the site, tap your name, set a 4-digit PIN (first login claims the slot).
+   Forgot it? Tap your name → **Forgot your PIN?** to set a new one (honor
+   system, gentlemen). The Commissioner can also reset anyone's PIN.
 2. Enter scores hole by hole in **Play → Scores**. Anyone in your group can
    keep the card. Everything saves automatically and syncs to all phones.
 3. Check **Matches** for live Ryder Cup status, **Skins** for the money board,

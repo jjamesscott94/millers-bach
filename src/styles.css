@@ -192,6 +192,7 @@ textarea { width: 100%; }
 .login-pin { display: flex; flex-direction: column; gap: 12px; max-width: 360px; margin: 0 auto; }
 .login-pin input { font-size: 26px; text-align: center; letter-spacing: .4em; }
 .login-pin .error { text-align: center; }
+.login-forgot { text-align: center; margin-top: 4px; }
 
 /* ---------- cup scoreboard (versus screen) ---------- */
 .scoreboard {

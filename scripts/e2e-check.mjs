@@ -81,6 +81,19 @@ await page.getByRole('button', { name: 'Unlock' }).click()
 await page.waitForTimeout(800)
 ok('admin panel opens', await page.getByText('Lineups & matchups').isVisible())
 
+// Forgot PIN: log out, reset Andrew's PIN from the login screen, log back in
+await page.locator('.navbtn', { hasText: 'Me' }).click()
+await page.waitForTimeout(400)
+await page.getByRole('button', { name: 'Log out' }).click()
+await page.waitForTimeout(600)
+await page.locator('.login-player', { hasText: 'Andrew' }).click()
+await page.getByRole('button', { name: 'Forgot your PIN?' }).click()
+await page.locator('input[type=password]').fill('5555')
+await page.getByRole('button', { name: /set new pin/i }).click()
+await page.waitForTimeout(2000)
+// Lands on whatever page the hash points at; the bottom nav only exists when logged in.
+ok('forgot-PIN reset logs back in', await page.locator('.bottomnav').isVisible() && !(await page.locator('.login-grid').isVisible()))
+
 ok('no page errors', errors.length === 0)
 if (errors.length) console.error(errors.slice(0, 5))
 

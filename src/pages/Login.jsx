@@ -3,11 +3,12 @@ import trophy from '../assets/trophy.png'
 import { useStore } from '../lib/store.jsx'
 
 export default function Login() {
-  const { meta, data, login, online } = useStore()
+  const { meta, data, login, forgotPin, online } = useStore()
   const [pid, setPid] = useState(null)
   const [pin, setPinVal] = useState('')
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
+  const [resetting, setResetting] = useState(false)
 
   const claimed = id => !!data[`prof:${id}`]?.pinHash
   const selected = pid ? meta.players.find(p => p.id === pid) : null
@@ -16,7 +17,7 @@ export default function Login() {
     e.preventDefault()
     if (!pid || pin.length < 4) { setErr('PIN must be at least 4 digits.'); return }
     setBusy(true); setErr('')
-    const res = await login(pid, pin)
+    const res = resetting ? await forgotPin(pid, pin) : await login(pid, pin)
     setBusy(false)
     if (!res.ok) setErr(res.error)
   }
@@ -49,15 +50,33 @@ export default function Login() {
         </>
       ) : (
         <form className="login-pin" onSubmit={submit}>
-          <button type="button" className="linkbtn" onClick={() => { setPid(null); setPinVal('') }}>&larr; Not {selected.name}?</button>
-          <h2 className="login-h2">{claimed(pid) ? `Welcome back, ${selected.name}` : `Claim ${selected.name}`}</h2>
-          <p className="hint">{claimed(pid) ? 'Enter your PIN.' : 'First time in \u2014 set a 4+ digit PIN you\u2019ll remember all weekend.'}</p>
+          <button type="button" className="linkbtn" onClick={() => { setPid(null); setPinVal(''); setResetting(false); setErr('') }}>&larr; Not {selected.name}?</button>
+          <h2 className="login-h2">
+            {resetting ? `New PIN for ${selected.name}` : claimed(pid) ? `Welcome back, ${selected.name}` : `Claim ${selected.name}`}
+          </h2>
+          <p className="hint">
+            {resetting
+              ? 'Pick a new 4+ digit PIN \u2014 it replaces the old one. Resetting a buddy\u2019s PIN to mess with him is a 2-drink penalty.'
+              : claimed(pid) ? 'Enter your PIN.' : 'First time in \u2014 set a 4+ digit PIN you\u2019ll remember all weekend.'}
+          </p>
           <input
-            autoFocus type="password" inputMode="numeric" placeholder="PIN"
+            autoFocus type="password" inputMode="numeric" placeholder={resetting ? 'New PIN' : 'PIN'}
             value={pin} onChange={e => setPinVal(e.target.value.replace(/\D/g, ''))} maxLength={8}
           />
           {err && <p className="error">{err}</p>}
-          <button className="btn primary" disabled={busy}>{claimed(pid) ? 'Log in' : 'Claim profile'}</button>
+          <button className="btn primary" disabled={busy}>
+            {resetting ? 'Set new PIN & log in' : claimed(pid) ? 'Log in' : 'Claim profile'}
+          </button>
+          {claimed(pid) && !resetting && (
+            <button type="button" className="linkbtn login-forgot" onClick={() => { setResetting(true); setPinVal(''); setErr('') }}>
+              Forgot your PIN?
+            </button>
+          )}
+          {resetting && (
+            <button type="button" className="linkbtn login-forgot" onClick={() => { setResetting(false); setPinVal(''); setErr('') }}>
+              Never mind, I remember it
+            </button>
+          )}
         </form>
       )}
     </div>
