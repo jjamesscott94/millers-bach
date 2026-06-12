@@ -22,6 +22,13 @@ export const COURSES = {
     si: [9, 13, 5, 7, 17, 1, 11, 15, 3, 4, 16, 2, 14, 10, 8, 12, 18, 6],
     yards: [385, 309, 465, 363, 133, 422, 366, 189, 507, 422, 161, 405, 277, 519, 419, 383, 114, 552],
   },
+  shinnecock: {
+    name: 'Shinnecock Hills',
+    loc: 'Sim Bay \u00b7 Southampton, NY \u00b7 2026 U.S. Open host',
+    par: [4, 3, 4, 4, 5, 4, 3, 4, 4, 4, 3, 4, 4, 4, 4, 5, 3, 4],
+    si: [15, 17, 5, 7, 11, 1, 13, 9, 3, 2, 16, 8, 12, 4, 6, 10, 18, 14],
+    yards: [399, 220, 469, 409, 537, 453, 189, 394, 435, 415, 159, 469, 374, 463, 409, 540, 180, 426],
+  },
   pebble: {
     name: 'Pebble Beach Golf Links',
     loc: 'Sim Bay \u00b7 Pebble Beach, CA',
@@ -152,7 +159,7 @@ export const DEFAULT_META = {
   rounds: [
     // 3 + 3 + 7 = 13 points. First to 7 lifts the Cup.
     round('r1', 'Round 1 \u00b7 Grayhawk', 'Saturday, June 13 \u00b7 On the course', 'raptor', 'fourball', ['p7', 'p14']),
-    round('r2', 'Round 2 \u00b7 Pebble Beach', 'Simulator session', 'pebble', 'fourball', ['p5', 'p13']),
+    round('r2', 'Round 2 \u00b7 Shinnecock Hills', 'Simulator session \u00b7 2026 U.S. Open venue', 'shinnecock', 'fourball', ['p5', 'p13']),
     round('r3', 'Round 3 \u00b7 Pinehurst No. 2', 'Simulator \u00b7 Sunday Singles', 'pinehurst', 'singles', []),
   ],
   games: GAMES,

@@ -11,7 +11,7 @@ games, and bragging rights.
 | Round | Course | Where | Format |
 |---|---|---|---|
 | 1 | Grayhawk (Raptor by default — Talon selectable) | Real life — Sat, June 13 | Four-ball (2v2 net best ball), 3 matches |
-| 2 | Pebble Beach | Simulator | Four-ball, 3 matches |
+| 2 | Shinnecock Hills (2026 U.S. Open venue) | Simulator | Four-ball, 3 matches |
 | 3 | Pinehurst No. 2 | Simulator | Sunday singles (1v1), 7 matches |
 
 13 points up for grabs — first team to **7** takes the Cup.
