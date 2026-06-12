@@ -51,6 +51,11 @@ export default function App() {
 
   return (
     <div className="app">
+      <header className="masthead">
+        <div className="masthead-rule" />
+        <div className="masthead-title">{meta.eventName}</div>
+        <div className="masthead-kicker">Scottsdale, Ariz. &middot; {meta.dates}</div>
+      </header>
       {(!online || pending > 0) && (
         <div className="syncbar">
           {online ? `Syncing ${pending} change${pending === 1 ? '' : 's'}\u2026` : 'Offline \u2014 changes saved on this phone and will sync when you\u2019re back.'}

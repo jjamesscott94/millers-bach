@@ -12,11 +12,6 @@ export default function Dashboard() {
 
   return (
     <div>
-      <header className="hero">
-        <h1>{meta.eventName}</h1>
-        <p>{meta.subtitle} &middot; {meta.dates}</p>
-      </header>
-
       <section className="card scoreboard">
         <div className="sb-team" style={{ '--c': A.color }}>
           <div className="sb-name">{A.name}</div>

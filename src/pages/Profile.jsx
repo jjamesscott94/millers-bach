@@ -37,7 +37,7 @@ export default function Profile() {
 
       <div className="card">
         <h3>Your handicap</h3>
-        <p className="hint">Everyone starts at 20. Only you can change yours &mdash; be honest, the strokes matter.</p>
+        <p className="hint">Seeded from the trip sheet. Only you can change yours &mdash; be honest, the strokes matter.</p>
         <div className="row">
           <input type="number" inputMode="numeric" min="0" max="40" value={hcp} onChange={e => setHcpVal(e.target.value)} />
           <button className="btn primary" onClick={() => {

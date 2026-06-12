@@ -44,7 +44,7 @@ export default function Login() {
               </button>
             ))}
           </div>
-          <p className="hint">Placeholder name? Pick your slot, claim it, then rename yourself in the Me tab.</p>
+          <p className="hint">Tap your name and set a PIN. Handicaps are pre-loaded from the trip sheet.</p>
         </>
       ) : (
         <form className="login-pin" onSubmit={submit}>
