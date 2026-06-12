@@ -1,0 +1,167 @@
+// Pure scoring logic: handicap strokes, net scores, match play, skins,
+// and the overall Ryder Cup tally.
+
+// Strokes received on a hole for a given course handicap (full allocation,
+// standard stroke-index method; works above 18 too: a 20 strokes every hole
+// plus a second pop on SI 1 and 2).
+export function strokesOnHole(hcp, si) {
+  const h = Math.max(0, Math.round(hcp ?? 20))
+  return Math.floor(h / 18) + (si <= h % 18 ? 1 : 0)
+}
+
+export function netScore(gross, hcp, si) {
+  if (gross == null) return null
+  return gross - strokesOnHole(hcp, si)
+}
+
+export function getHcp(data, pid) {
+  const prof = data[`prof:${pid}`]
+  return prof && typeof prof.hcp === 'number' ? prof.hcp : 20
+}
+
+export function getScores(data, rid, pid) {
+  const s = data[`scores:${rid}:${pid}`]
+  return Array.isArray(s) ? s : Array(18).fill(null)
+}
+
+// Best net ball for a side on one hole; null until every listed player has a
+// gross score (a four-ball side "has a score" once either man is in, but we
+// wait for both so a hole never flips after the fact).
+function sideNet(data, rid, pids, course, holeIdx) {
+  let best = null
+  for (const pid of pids) {
+    if (!pid) continue
+    const gross = getScores(data, rid, pid)[holeIdx]
+    if (gross == null) return null
+    const net = netScore(gross, getHcp(data, pid), course.si[holeIdx])
+    if (best == null || net < best) best = net
+  }
+  return best
+}
+
+// Match status. Holes count in order; we stop at the first hole where either
+// side is missing a score.
+export function matchStatus(data, rid, match, course) {
+  let up = 0 // positive = side A up
+  let thru = 0
+  for (let h = 0; h < 18; h++) {
+    const a = sideNet(data, rid, match.a, course, h)
+    const b = sideNet(data, rid, match.b, course, h)
+    if (a == null || b == null) break
+    if (a < b) up++
+    else if (b < a) up--
+    thru = h + 1
+    const remaining = 18 - thru
+    if (Math.abs(up) > remaining) {
+      return {
+        thru, up, done: true,
+        winner: up > 0 ? 'A' : 'B',
+        label: `${Math.abs(up)}&${remaining}`,
+        points: up > 0 ? { A: 1, B: 0 } : { A: 0, B: 1 },
+      }
+    }
+  }
+  if (thru === 18) {
+    if (up === 0) return { thru, up, done: true, winner: null, label: 'HALVED', points: { A: 0.5, B: 0.5 } }
+    return {
+      thru, up, done: true,
+      winner: up > 0 ? 'A' : 'B',
+      label: `${Math.abs(up)} UP`,
+      points: up > 0 ? { A: 1, B: 0 } : { A: 0, B: 1 },
+    }
+  }
+  return {
+    thru, up, done: false,
+    winner: null,
+    label: thru === 0 ? 'NOT STARTED' : up === 0 ? `AS thru ${thru}` : `${Math.abs(up)} UP thru ${thru}`,
+    points: { A: 0, B: 0 },
+  }
+}
+
+// Cup scoreboard. `solid` counts only finished matches; `live` adds the
+// current leader of in-progress matches as if the match ended now.
+export function cupTally(data, meta) {
+  const solid = { A: 0, B: 0 }
+  const live = { A: 0, B: 0 }
+  for (const round of meta.rounds) {
+    const course = meta.courses[round.course]
+    for (const m of round.matches) {
+      const st = matchStatus(data, round.id, m, course)
+      solid.A += st.points.A; solid.B += st.points.B
+      if (st.done) {
+        live.A += st.points.A; live.B += st.points.B
+      } else if (st.thru > 0) {
+        if (st.up > 0) live.A += 1
+        else if (st.up < 0) live.B += 1
+        else { live.A += 0.5; live.B += 0.5 }
+      }
+    }
+  }
+  const total = meta.rounds.reduce((n, r) => n + r.matches.length, 0)
+  return { solid, live, total, toWin: total / 2 + 0.5 }
+}
+
+// Skins for one round, recalculated live from whatever scores exist.
+// A hole is evaluated once at least 2 players have a score on it. Lowest
+// unique net wins the pot (1 skin + any carried). Ties carry.
+export function skinsForRound(data, rid, meta, round) {
+  const course = meta.courses[round.course]
+  const useNet = meta.skinsNet !== false
+  const holes = []
+  const totals = {}
+  let carry = 0
+  for (let h = 0; h < 18; h++) {
+    const entries = []
+    for (const p of meta.players) {
+      const gross = getScores(data, rid, p.id)[h]
+      if (gross == null) continue
+      const score = useNet ? netScore(gross, getHcp(data, p.id), course.si[h]) : gross
+      entries.push({ pid: p.id, score, gross })
+    }
+    if (entries.length < 2) {
+      holes.push({ hole: h, state: 'pending', pot: carry + 1 })
+      continue
+    }
+    entries.sort((x, y) => x.score - y.score)
+    const best = entries[0]
+    const tied = entries.filter(e => e.score === best.score)
+    if (tied.length === 1) {
+      const pot = carry + 1
+      totals[best.pid] = (totals[best.pid] || 0) + pot
+      holes.push({ hole: h, state: 'won', pid: best.pid, score: best.score, gross: best.gross, pot })
+      carry = 0
+    } else {
+      holes.push({ hole: h, state: 'push', score: best.score, pot: carry + 1, tied: tied.map(t => t.pid) })
+      carry += 1
+    }
+  }
+  return { holes, totals, carryLeft: carry }
+}
+
+export function skinsTotalsAllRounds(data, meta) {
+  const totals = {}
+  for (const round of meta.rounds) {
+    const { totals: t } = skinsForRound(data, round.id, meta, round)
+    for (const [pid, n] of Object.entries(t)) totals[pid] = (totals[pid] || 0) + n
+  }
+  return totals
+}
+
+export function playerById(meta, pid) {
+  return meta.players.find(p => p.id === pid)
+}
+
+export function fmtScore(gross, par) {
+  if (gross == null) return ''
+  const d = gross - par
+  if (d <= -2) return 'eagle'
+  if (d === -1) return 'birdie'
+  if (d === 0) return 'par'
+  if (d === 1) return 'bogey'
+  return 'double'
+}
+
+// Stroke dots shown on the scorecard: how many pops a player gets on a hole.
+export function dots(n) {
+  return n > 0 ? '\u2022'.repeat(Math.min(n, 3)) : ''
+}
