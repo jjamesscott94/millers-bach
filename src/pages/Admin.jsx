@@ -50,6 +50,26 @@ function PlayersEditor() {
   )
 }
 
+function SkinsEntries({ round }) {
+  const { data, meta, setSkinsIn } = useStore()
+  const inIds = meta.players.filter(p => data[`skinsin:${round.id}:${p.id}`] === true).map(p => p.id)
+  return (
+    <>
+      <label className="lbl">Skins entries ({inIds.length} in &middot; tap to toggle)</label>
+      <div className="chips wrap">
+        {meta.players.map(p => {
+          const isIn = inIds.includes(p.id)
+          return (
+            <button key={p.id} className={isIn ? 'chip active' : 'chip'} onClick={() => setSkinsIn(round.id, p.id, !isIn)}>
+              {p.name}
+            </button>
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
 function LineupsEditor() {
   const { meta, updateMeta } = useStore()
   return (
@@ -101,6 +121,7 @@ function LineupsEditor() {
               </div>
             </div>
           ))}
+          <SkinsEntries round={round} />
         </div>
       ))}
       <p className="hint">A man can only play one match per round &mdash; the dropdowns don&rsquo;t enforce it, so double-check yourself, Commish.</p>
@@ -142,8 +163,8 @@ function SettingsEditor() {
         <input defaultValue={meta.teams.A.name} onBlur={e => { const v = e.target.value.trim(); if (v) updateMeta(m => { m.teams.A.name = v; return m }) }} />
         <input defaultValue={meta.teams.B.name} onBlur={e => { const v = e.target.value.trim(); if (v) updateMeta(m => { m.teams.B.name = v; return m }) }} />
       </div>
-      <label className="lbl">Skin value ($)</label>
-      <input type="number" min="0" defaultValue={meta.skinsValue} onBlur={e => { const v = parseInt(e.target.value, 10); updateMeta(m => { m.skinsValue = isNaN(v) ? 0 : v; return m }) }} />
+      <label className="lbl">Skins buy-in per player, per round ($)</label>
+      <input type="number" min="0" defaultValue={meta.skinsBuyIn ?? meta.skinsValue ?? 5} onBlur={e => { const v = parseInt(e.target.value, 10); updateMeta(m => { m.skinsBuyIn = isNaN(v) ? 0 : v; return m }) }} />
       <label className="lbl">Skins scoring</label>
       <select value={meta.skinsNet !== false ? 'net' : 'gross'} onChange={e => updateMeta(m => { m.skinsNet = e.target.value === 'net'; return m })}>
         <option value="net">Net (handicapped)</option>

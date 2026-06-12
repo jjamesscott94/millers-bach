@@ -1,5 +1,5 @@
 // Quick sanity checks for the scoring engine. Run: node scripts/check-engine.mjs
-import { strokesOnHole, matchStatus, skinsForRound, cupTally } from '../src/lib/engine.js'
+import { strokesOnHole, matchStatus, skinsForRound, skinsPool, fmtMoney, cupTally } from '../src/lib/engine.js'
 import { DEFAULT_META } from '../src/lib/defaults.js'
 
 let failures = 0
@@ -52,10 +52,13 @@ data3[`scores:r1:${m1.a[0]}`] = par.map((p, i) => (i < 3 ? p - 1 : null)) // 3 s
 const st3 = matchStatus(data3, 'r1', m1, course)
 check('match live', { done: st3.done, thru: st3.thru, up: st3.up }, { done: false, thru: 3, up: 3 })
 
-// Skins: hole 0 (par 4, SI 11): p1 gross 3 (net 2), everyone else gross 4 (net 3) -> p1 wins skin
-// hole 1: everyone gross = par -> push; hole 2: p2 unique low -> wins pot of 2
+// Skins (opt-in): everyone enters except p14. Hole 0: p1 gross 3, rest gross 4
+// -> p1 wins skin. Hole 1: all par -> push. Hole 2: p2 unique low -> pot of 2.
+// p14 shoots 1s but is NOT entered, so he can't win anything.
 const data4 = {}
+const entrants = everyone.filter(pid => pid !== 'p14')
 for (const pid of everyone) data4[`prof:${pid}`] = { hcp: 20 }
+for (const pid of entrants) data4[`skinsin:r1:${pid}`] = true
 for (const pid of everyone) {
   const sc = Array(18).fill(null)
   sc[0] = 4; sc[1] = course.par[1]; sc[2] = course.par[2]
@@ -63,12 +66,23 @@ for (const pid of everyone) {
 }
 data4['scores:r1:p1'][0] = 3
 data4['scores:r1:p2'][2] = course.par[2] - 1
+data4['scores:r1:p14'] = Array(18).fill(1) // hustler who didn't pay
 const sk = skinsForRound(data4, 'r1', meta, r1)
 check('skin h1 winner', { pid: sk.holes[0].pid, pot: sk.holes[0].pot }, { pid: 'p1', pot: 1 })
 check('skin h2 push', sk.holes[1].state, 'push')
 check('skin h3 carry pot', { pid: sk.holes[2].pid, pot: sk.holes[2].pot }, { pid: 'p2', pot: 2 })
-check('skin totals', sk.totals, { p1: 1, p2: 2 })
+check('skin totals (non-entrant excluded)', sk.totals, { p1: 1, p2: 2 })
 check('skin pending h4', sk.holes[3].state, 'pending')
+
+// Pool math: 13 entrants x $5 = $65 pot; 3 skins claimed -> p1 gets 1/3, p2 gets 2/3
+const pool = skinsPool(data4, meta, r1)
+check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 13, pot: 65, claimed: 3 })
+check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p2: Math.round(pool.payouts.p2 * 100) / 100 }, { p1: 21.67, p2: 43.33 })
+check('fmtMoney', [fmtMoney(65), fmtMoney(21.666666)], ['$65', '$21.67'])
+
+// Nobody entered -> no skins awarded no matter the scores
+const sk0 = skinsForRound({ ...data4, 'skinsin:r1:p1': false, ...Object.fromEntries(entrants.map(p => [`skinsin:r1:${p}`, false])) }, 'r1', meta, r1)
+check('no entrants, no skins', sk0.totals, {})
 
 // cup tally over the full default meta with data: only r1m1 decided (10&8 from data)
 // 3 + 3 + 7 matches = 13 points, first to 7

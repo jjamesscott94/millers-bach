@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useStore } from '../lib/store.jsx'
-import { getScores, getHcp, matchStatus, skinsForRound, strokesOnHole, netScore, dots, playerById } from '../lib/engine.js'
+import { getScores, getHcp, matchStatus, skinsPool, skinsBuyIn, strokesOnHole, netScore, dots, playerById, fmtMoney } from '../lib/engine.js'
 import { go } from '../App.jsx'
 import { fmtPts } from './Dashboard.jsx'
 
@@ -51,7 +51,8 @@ export default function Round({ roundId, tab }) {
 // ---------------- Scores ----------------
 
 function ScoreTab({ round, course }) {
-  const { data, meta, me, setScore } = useStore()
+  const { data, meta, me, setScore, setSkinsIn } = useStore()
+  const meInSkins = me ? data[`skinsin:${round.id}:${me.id}`] === true : true
   const groups = useMemo(() => {
     const gs = round.matches.map((m, i) => ({
       id: m.id, label: `Match ${i + 1}`, pids: [...m.a, ...m.b].filter(Boolean),
@@ -100,6 +101,13 @@ function ScoreTab({ round, course }) {
             <span className="gamelabel">{'\u{1F37A}'} Hole {hole + 1} game</span>
             <p>{game}</p>
           </div>
+
+          {me && !meInSkins && (
+            <div className="card skinnudge">
+              <span>You&rsquo;re <strong>not in skins</strong> this round.</span>
+              <button className="btn small primary" onClick={() => setSkinsIn(round.id, me.id, true)}>Buy in &middot; {fmtMoney(skinsBuyIn(meta))}</button>
+            </div>
+          )}
 
           <div className="scoregrid">
           {group.pids.map(pid => {
@@ -260,40 +268,61 @@ function bestNet(data, rid, pids, course, h) {
 // ---------------- Skins ----------------
 
 function SkinsTab({ round, course }) {
-  const { data, meta } = useStore()
-  const { holes, totals, carryLeft } = skinsForRound(data, round.id, meta, round)
+  const { data, meta, me, setSkinsIn } = useStore()
+  const { entrants, pot, holes, totals, carryLeft, claimed, payouts } = skinsPool(data, meta, round)
   const rank = Object.entries(totals).sort((a, b) => b[1] - a[1])
-  const claimed = rank.reduce((n, [, c]) => n + c, 0)
-  const val = meta.skinsValue || 0
+  const buyIn = skinsBuyIn(meta)
+  const meIn = me ? entrants.includes(me.id) : false
   return (
     <div>
+      <div className="card skinspool">
+        <div className="pool-row">
+          <div>
+            <div className="pool-pot">{fmtMoney(pot)}</div>
+            <div className="hint">{entrants.length} in &times; {fmtMoney(buyIn)} buy-in</div>
+          </div>
+          {me && (
+            <button className={meIn ? 'btn' : 'btn primary'} onClick={() => setSkinsIn(round.id, me.id, !meIn)}>
+              {meIn ? 'I\u2019m in \u00b7 tap to drop out' : `Buy in \u00b7 ${fmtMoney(buyIn)}`}
+            </button>
+          )}
+        </div>
+        <p className="hint">
+          {entrants.length === 0
+            ? 'Nobody\u2019s in yet \u2014 first buy-in starts the pot. Cash settles at the bar.'
+            : `In: ${entrants.map(pid => playerById(meta, pid)?.name).join(', ')}`}
+        </p>
+      </div>
       <div className="card">
         <h3>Round skins leaderboard</h3>
         {rank.length === 0
-          ? <p className="hint">Nothing claimed yet &mdash; first outright low {meta.skinsNet !== false ? 'net' : 'gross'} score on a hole opens the account.</p>
+          ? <p className="hint">Nothing claimed yet &mdash; first outright low {meta.skinsNet !== false ? 'net' : 'gross'} score among entrants opens the account.</p>
           : (
-            <table className="table"><tbody>
+            <table className="table">
+              <thead><tr><th>Player</th><th className="num">Skins</th><th className="num">Payout*</th></tr></thead>
+              <tbody>
               {rank.map(([pid, n]) => (
                 <tr key={pid}>
                   <td>{playerById(meta, pid)?.name}</td>
-                  <td className="num">{n} skin{n === 1 ? '' : 's'}</td>
-                  <td className="num">{val ? `$${n * val}` : ''}</td>
+                  <td className="num">{n}</td>
+                  <td className="num">{payouts[pid] != null ? fmtMoney(payouts[pid]) : ''}</td>
                 </tr>
               ))}
             </tbody></table>
           )}
         <p className="hint">
-          {claimed} of 18 skins claimed{carryLeft > 0 ? ` \u00b7 ${carryLeft + 1} skins riding on the next outright winner` : ''} &mdash; live board, updates as cards come in.
+          {claimed} skin{claimed === 1 ? '' : 's'} claimed{carryLeft > 0 ? ` \u00b7 ${carryLeft + 1} riding on the next outright winner` : ''}.
+          {claimed > 0 ? ' *Projected: the pot splits across all skins won, so values move until the round\u2019s done.' : ''}
         </p>
       </div>
       <div className="card">
         <h3>{'\u{1F4B0}'} How skins work</h3>
         <ul className="rules">
-          <li>Every hole puts <strong>1 skin on the line</strong>{val ? <> &mdash; each worth <strong>${val}</strong></> : null}. 18 per round, every round, all {meta.players.length} of you in.</li>
-          <li>Lowest <strong>{meta.skinsNet !== false ? 'NET' : 'GROSS'} score wins the hole outright</strong> to take its skin. Any tie for low = nobody wins.</li>
-          <li>Tied skins don&rsquo;t vanish &mdash; they <strong>ride onto the next hole</strong>. Push holes 3 and 4, and hole 5 is suddenly worth 3 skins{val ? ` ($${3 * val})` : ''}.</li>
-          <li>Skins still riding when the round ends die there. Settle up at the bar.</li>
-          <li>Benched players can post a card and steal skins too.</li>
+          <li><strong>Opt-in per round:</strong> tap Buy in above ({fmtMoney(buyIn)} a round, cash at the bar). Only entrants&rsquo; scores count for skins &mdash; you can&rsquo;t win a hole you didn&rsquo;t pay for.</li>
+          <li>Every hole puts <strong>1 skin on the line</strong>. Lowest <strong>{meta.skinsNet !== false ? 'NET' : 'GROSS'} score wins it outright</strong> &mdash; any tie for low and nobody takes it.</li>
+          <li>Tied skins <strong>ride onto the next hole</strong> and stack. Push holes 3 and 4, and hole 5 is worth 3 skins.</li>
+          <li><strong>Payouts:</strong> the round&rsquo;s pot (buy-ins &times; entrants) splits across all skins won. Win 3 of 9 claimed skins, take a third of the pot. No skins won = money back.</li>
+          <li>Benched players can buy in, post a card, and steal skins too.</li>
         </ul>
       </div>
       <div className="card">

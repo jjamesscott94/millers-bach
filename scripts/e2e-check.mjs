@@ -59,6 +59,16 @@ ok('match points bar', await page.locator('.matchpts').isVisible())
 await page.getByRole('button', { name: 'Skins' }).click()
 await page.waitForTimeout(500)
 ok('skins table renders', await page.locator('.table').first().isVisible())
+ok('skins pool card', await page.locator('.pool-pot').isVisible())
+
+// Buy in, verify toggle, then drop back out to leave a clean slate
+await page.getByRole('button', { name: /buy in/i }).first().click()
+await page.waitForTimeout(800)
+const dropBtn = page.getByRole('button', { name: /tap to drop out/i })
+ok('skins buy-in toggles', await dropBtn.isVisible())
+await dropBtn.click()
+await page.waitForTimeout(600)
+ok('skins drop-out toggles back', await page.getByRole('button', { name: /buy in/i }).first().isVisible())
 
 // Games tab
 await page.getByRole('button', { name: 'Games', exact: true }).click()

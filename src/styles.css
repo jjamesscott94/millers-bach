@@ -331,6 +331,14 @@ textarea { width: 100%; }
 
 /* ---------- skins ---------- */
 .skinwon td { background: #fff3c4 !important; }
+.skinspool { border-left: 10px solid var(--grass); }
+.pool-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.pool-pot { font-family: var(--pixel); font-size: 30px; color: var(--grass-dark); }
+.skinnudge {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  background: #fff6d8; border-left: 10px solid var(--coin); font-size: 14px;
+}
+.chips.wrap { flex-wrap: wrap; overflow-x: visible; }
 
 /* ---------- games ---------- */
 .gamelist { margin: 8px 0 0; padding: 0; list-style: none; }

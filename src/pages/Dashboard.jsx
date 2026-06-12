@@ -1,13 +1,13 @@
 import React from 'react'
 import trophy from '../assets/trophy.png'
 import { useStore } from '../lib/store.jsx'
-import { cupTally, matchStatus, skinsTotalsAllRounds, playerById } from '../lib/engine.js'
+import { cupTally, matchStatus, skinsTotalsAllRounds, skinsBuyIn, playerById, fmtMoney } from '../lib/engine.js'
 import { go } from '../App.jsx'
 
 export default function Dashboard() {
   const { data, meta, me } = useStore()
   const tally = cupTally(data, meta)
-  const skins = skinsTotalsAllRounds(data, meta)
+  const { totals: skins, money } = skinsTotalsAllRounds(data, meta)
   const skinsRank = Object.entries(skins).sort((a, b) => b[1] - a[1])
   const { A, B } = meta.teams
 
@@ -57,7 +57,7 @@ export default function Dashboard() {
       <div>
       <h2 className="sectionh">Skins leaderboard</h2>
       <div className="card">
-        <p className="hint">1 skin per hole{meta.skinsValue ? `, $${meta.skinsValue} each` : ''} &mdash; 18 up for grabs every round. Lowest net wins a hole outright to claim it; ties stack the pot onto the next hole.</p>
+        <p className="hint">{fmtMoney(skinsBuyIn(meta))} buy-in per round, opt in on each round&rsquo;s Skins tab. 1 skin per hole, lowest net wins outright, ties stack the pot &mdash; each round&rsquo;s pot splits across its skins won.</p>
         {skinsRank.length === 0 ? (
           <p className="hint">No skins claimed yet.</p>
         ) : (
@@ -67,7 +67,7 @@ export default function Dashboard() {
                 <tr key={pid}>
                   <td>{playerById(meta, pid)?.name || pid}</td>
                   <td className="num">{n} skin{n === 1 ? '' : 's'}</td>
-                  <td className="num">{meta.skinsValue ? `$${n * meta.skinsValue}` : ''}</td>
+                  <td className="num">{money[pid] != null ? fmtMoney(money[pid]) : ''}</td>
                 </tr>
               ))}
             </tbody>

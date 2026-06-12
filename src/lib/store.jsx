@@ -133,6 +133,10 @@ export function StoreProvider({ children }) {
     write('meta', mutator(structuredClone(cur)))
   }, [write])
 
+  const setSkinsIn = useCallback((rid, pid, isIn) => {
+    write(`skinsin:${rid}:${pid}`, !!isIn)
+  }, [write])
+
   const setComp = useCallback((rid, kind, holeIdx, entry) => {
     const cur = dataRef.current?.[`comps:${rid}`] || { ctp: {}, ld: {} }
     const next = structuredClone(cur)
@@ -150,7 +154,7 @@ export function StoreProvider({ children }) {
   const value = {
     data: data || {}, meta, session, online, pending, refresh,
     login, logout, unlockAdmin, forgotPin,
-    setScore, setHcp, setPin, resetPin, setAdminPin, updateMeta, setComp, clearRoundScores,
+    setScore, setHcp, setPin, resetPin, setAdminPin, updateMeta, setComp, setSkinsIn, clearRoundScores,
     me: session ? meta.players.find(p => p.id === session.pid) : null,
     isAdmin: !!session?.admin,
   }

@@ -101,18 +101,31 @@ export function cupTally(data, meta) {
   return { solid, live, total, toWin: total / 2 + 0.5 }
 }
 
+// Skins is opt-in per round: each entrant pays the buy-in into the round's
+// pot, and only entrants' scores count toward skins.
+export function skinsEntrants(data, meta, rid) {
+  return meta.players.filter(p => data[`skinsin:${rid}:${p.id}`] === true).map(p => p.id)
+}
+
+export function skinsBuyIn(meta) {
+  if (typeof meta.skinsBuyIn === 'number') return meta.skinsBuyIn
+  return meta.skinsValue || 0
+}
+
 // Skins for one round, recalculated live from whatever scores exist.
-// A hole is evaluated once at least 2 players have a score on it. Lowest
+// A hole is evaluated once at least 2 entrants have a score on it. Lowest
 // unique net wins the pot (1 skin + any carried). Ties carry.
 export function skinsForRound(data, rid, meta, round) {
   const course = meta.courses[round.course]
   const useNet = meta.skinsNet !== false
+  const entrants = new Set(skinsEntrants(data, meta, rid))
   const holes = []
   const totals = {}
   let carry = 0
   for (let h = 0; h < 18; h++) {
     const entries = []
     for (const p of meta.players) {
+      if (!entrants.has(p.id)) continue
       const gross = getScores(data, rid, p.id)[h]
       if (gross == null) continue
       const score = useNet ? netScore(gross, getHcp(data, p.id), course.si[h]) : gross
@@ -138,13 +151,36 @@ export function skinsForRound(data, rid, meta, round) {
   return { holes, totals, carryLeft: carry }
 }
 
+// Pool view for one round: entrants, pot, and projected payouts.
+// Each skin's value = pot / total skins claimed, so payouts firm up as the
+// round finishes. With zero skins claimed the pot is still intact.
+export function skinsPool(data, meta, round) {
+  const entrants = skinsEntrants(data, meta, round.id)
+  const pot = entrants.length * skinsBuyIn(meta)
+  const { holes, totals, carryLeft } = skinsForRound(data, round.id, meta, round)
+  const claimed = Object.values(totals).reduce((a, b) => a + b, 0)
+  const payouts = {}
+  if (claimed > 0) {
+    for (const [pid, n] of Object.entries(totals)) payouts[pid] = (pot * n) / claimed
+  }
+  return { entrants, pot, holes, totals, carryLeft, claimed, payouts }
+}
+
+// Weekend totals: skins counts and projected dollars across all rounds.
 export function skinsTotalsAllRounds(data, meta) {
   const totals = {}
+  const money = {}
   for (const round of meta.rounds) {
-    const { totals: t } = skinsForRound(data, round.id, meta, round)
+    const { totals: t, payouts } = skinsPool(data, meta, round)
     for (const [pid, n] of Object.entries(t)) totals[pid] = (totals[pid] || 0) + n
+    for (const [pid, d] of Object.entries(payouts)) money[pid] = (money[pid] || 0) + d
   }
-  return totals
+  return { totals, money }
+}
+
+export function fmtMoney(n) {
+  const r = Math.round(n * 100) / 100
+  return r % 1 === 0 ? `$${r}` : `$${r.toFixed(2)}`
 }
 
 export function playerById(meta, pid) {
