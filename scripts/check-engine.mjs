@@ -27,28 +27,29 @@ const everyone = meta.players.map(p => p.id)
 // all 13 at hcp 20
 for (const pid of everyone) data[`prof:${pid}`] = { hcp: 20 }
 
-// Singles-style test using r1m1 pairs: give A side better scores on first 10 holes.
-// A pair shoots par, B pair shoots bogey on every hole => A wins every hole.
+// Four-ball test using r1m1: A pair shoots par, B pair shoots bogey on every
+// hole => A wins every hole. Player ids come from the match itself.
 const par = course.par
-for (const pid of ['p1', 'p2']) data[`scores:r1:${pid}`] = par.map(p => p)
-for (const pid of ['p8', 'p9']) data[`scores:r1:${pid}`] = par.map(p => p + 1)
-const st = matchStatus(data, 'r1', r1.matches[0], course)
+const m1 = r1.matches[0]
+for (const pid of m1.a) data[`scores:r1:${pid}`] = par.map(p => p)
+for (const pid of m1.b) data[`scores:r1:${pid}`] = par.map(p => p + 1)
+const st = matchStatus(data, 'r1', m1, course)
 // equal handicaps cancel; A up 1 per hole; decided when up > remaining: after hole 10 (10 up, 8 left)
 check('match decided', { done: st.done, label: st.label, winner: st.winner }, { done: true, label: '10&8', winner: 'A' })
 
 // halved match: identical scores
 const data2 = structuredClone(data)
-for (const pid of ['p8', 'p9']) data2[`scores:r1:${pid}`] = par.map(p => p)
-const st2 = matchStatus(data2, 'r1', r1.matches[0], course)
+for (const pid of m1.b) data2[`scores:r1:${pid}`] = par.map(p => p)
+const st2 = matchStatus(data2, 'r1', m1, course)
 check('match halved', { done: st2.done, label: st2.label }, { done: true, label: 'HALVED' })
 
 // in progress: only 3 holes entered for all four
 const data3 = structuredClone(data)
-for (const pid of ['p1', 'p2', 'p8', 'p9']) {
+for (const pid of [...m1.a, ...m1.b]) {
   data3[`scores:r1:${pid}`] = par.map((p, i) => (i < 3 ? p : null))
 }
-data3['scores:r1:p1'] = par.map((p, i) => (i < 3 ? p - 1 : null)) // p1 birdies 3 straight
-const st3 = matchStatus(data3, 'r1', r1.matches[0], course)
+data3[`scores:r1:${m1.a[0]}`] = par.map((p, i) => (i < 3 ? p - 1 : null)) // 3 straight birdies
+const st3 = matchStatus(data3, 'r1', m1, course)
 check('match live', { done: st3.done, thru: st3.thru, up: st3.up }, { done: false, thru: 3, up: 3 })
 
 // Skins: hole 0 (par 4, SI 11): p1 gross 3 (net 2), everyone else gross 4 (net 3) -> p1 wins skin

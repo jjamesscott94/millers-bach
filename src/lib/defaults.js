@@ -86,6 +86,7 @@ export const RULES = [
   'Match play: net best-ball in the pairs rounds, net singles in the finale. Full handicap strokes by hole index.',
   'Skins: lowest unique NET score on a hole takes the skin. Ties carry the pot to the next hole.',
   'Both squads carry 7 men \u2014 each team benches one for the pairs rounds, everybody plays Sunday singles. Benched men still drink (and can still post a card for skins).',
+  'Groups rotate every round \u2014 new partner in Round 2, a fresh opponent in Sunday singles. Make new friends.',
   'Gimmies inside the leather, unless money or matches are on the line.',
   'The groom never buys his own drinks. Ever.',
 ]
@@ -101,28 +102,35 @@ export function longestPar5(course) {
   return best >= 0 ? best : 0
 }
 
-const teamIds = t => PLAYERS.filter(p => p.team === t).map(p => p.id)
-
-function pairsMatches(roundId, sitting) {
-  const a = teamIds('A').filter(id => !sitting.includes(id))
-  const b = teamIds('B').filter(id => !sitting.includes(id))
-  return [0, 1, 2].map(i => ({
-    id: `${roundId}m${i + 1}`,
-    a: [a[i * 2], a[i * 2 + 1]],
-    b: [b[i * 2], b[i * 2 + 1]],
-  }))
-}
-function singlesMatches(roundId, sitting) {
-  const a = teamIds('A').filter(id => !sitting.includes(id))
-  const b = teamIds('B').filter(id => !sitting.includes(id))
-  return a.map((pid, i) => ({ id: `${roundId}m${i + 1}`, a: [pid], b: [b[i]] }))
+// Pairings rotate every round: nobody partners the same man twice, and the
+// singles draw gives everyone a fresh opponent. Luke anchors the last match.
+const MATCHES = {
+  r1: [
+    { id: 'r1m1', a: ['p1', 'p2'], b: ['p10', 'p9'] },
+    { id: 'r1m2', a: ['p3', 'p4'], b: ['p8', 'p11'] },
+    { id: 'r1m3', a: ['p5', 'p6'], b: ['p12', 'p13'] },
+  ],
+  r2: [
+    { id: 'r2m1', a: ['p1', 'p4'], b: ['p8', 'p12'] },
+    { id: 'r2m2', a: ['p3', 'p6'], b: ['p9', 'p11'] },
+    { id: 'r2m3', a: ['p2', 'p7'], b: ['p10', 'p14'] },
+  ],
+  r3: [
+    { id: 'r3m1', a: ['p2'], b: ['p12'] },
+    { id: 'r3m2', a: ['p4'], b: ['p14'] },
+    { id: 'r3m3', a: ['p5'], b: ['p8'] },
+    { id: 'r3m4', a: ['p7'], b: ['p9'] },
+    { id: 'r3m5', a: ['p6'], b: ['p10'] },
+    { id: 'r3m6', a: ['p3'], b: ['p13'] },
+    { id: 'r3m7', a: ['p1'], b: ['p11'] },
+  ],
 }
 
 function round(id, name, date, courseId, format, sitting) {
   const c = COURSES[courseId]
   return {
     id, name, date, course: courseId, format, sitting,
-    matches: format === 'fourball' ? pairsMatches(id, sitting) : singlesMatches(id, sitting),
+    matches: MATCHES[id],
     ctpHoles: par3s(c),
     ldHole: longestPar5(c),
   }
