@@ -25,19 +25,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - run: node scripts/check-engine.mjs
+      # Pages steps are best-effort: they start working the moment the repo
+      # owner enables Pages (Settings -> Pages -> Source: GitHub Actions).
+      # Until then the primary deployment lives at https://millers-bach.surge.sh
       - uses: actions/configure-pages@v5
+        continue-on-error: true
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true

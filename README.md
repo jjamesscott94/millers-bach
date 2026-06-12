@@ -3,7 +3,7 @@
 Ryder Cup-style scoring app for Luke Miller's bachelor party golf weekend —
 13 guys, 3 rounds, skins, drinking games, and bragging rights.
 
-**Live site:** https://jjamesscott94.github.io/millers-bach/
+**Live site:** https://millers-bach.surge.sh
 
 ## The format
 
@@ -40,12 +40,21 @@ a round's scores.
 
 ## Tech notes
 
-- React + Vite static app, deployed to GitHub Pages by the workflow in
-  `.github/workflows/deploy.yml` on every push to `main`.
+- React + Vite static app. Live deployment is on [surge.sh](https://surge.sh)
+  at https://millers-bach.surge.sh. To redeploy after changes:
+  `npm run build && npx surge ./dist millers-bach.surge.sh`
+  (log in with the surge account credentials).
+- A GitHub Pages workflow (`.github/workflows/deploy.yml`) is also included.
+  It starts publishing to https://jjamesscott94.github.io/millers-bach/
+  automatically once the repo owner enables Pages
+  (Settings → Pages → Source: **GitHub Actions**) — one click, then every
+  push to `main` deploys.
 - Shared state lives in a [kvdb.io](https://kvdb.io) bucket (see
   `src/lib/defaults.js`), polled every 15s. Writes are queued in
   `localStorage` and retried, so spotty course wifi won't lose scores.
 - `npm run seed` initializes the bucket (`--force` re-seeds config without
-  touching scores). `npm run dev` for local dev.
+  touching scores). `npm run dev` for local dev,
+  `node scripts/check-engine.mjs` for scoring-engine tests,
+  `node scripts/e2e-check.mjs` for a live-site smoke test (Playwright).
 - This is a weekend party app: auth is PIN-on-the-honor-system, and anyone
   with the bucket ID could write to it. Don't run a major championship on it.
