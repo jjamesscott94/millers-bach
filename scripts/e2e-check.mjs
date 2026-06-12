@@ -10,7 +10,8 @@ const ok = (name, cond) => {
 }
 
 const browser = await chromium.launch()
-const page = await browser.newPage()
+const viewport = process.argv[3] === 'mobile' ? { width: 390, height: 844 } : { width: 1280, height: 800 }
+const page = await browser.newPage({ viewport })
 const errors = []
 page.on('pageerror', e => errors.push(String(e)))
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()) })

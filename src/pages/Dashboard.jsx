@@ -31,6 +31,8 @@ export default function Dashboard() {
 
       {me && <p className="welcome">You&rsquo;re in, {playerById(meta, me.id)?.name}. Go post some numbers.</p>}
 
+      <div className="dashgrid">
+      <div>
       <h2 className="sectionh">Rounds</h2>
       {meta.rounds.map(round => {
         const course = meta.courses[round.course]
@@ -49,7 +51,9 @@ export default function Dashboard() {
           </button>
         )
       })}
+      </div>
 
+      <div>
       <h2 className="sectionh">Skins leaderboard {meta.skinsValue ? `($${meta.skinsValue} a skin)` : ''}</h2>
       <div className="card">
         {skinsRank.length === 0 ? (
@@ -74,6 +78,8 @@ export default function Dashboard() {
         <ul className="rules">
           {meta.rules.map((r, i) => <li key={i}>{r}</li>)}
         </ul>
+      </div>
+      </div>
       </div>
     </div>
   )

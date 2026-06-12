@@ -37,7 +37,7 @@ export default function Login() {
           )}
           <div className="login-grid">
             {meta.players.map(p => (
-              <button key={p.id} className="login-player" style={{ borderColor: meta.teams[p.team].color }} onClick={() => { setPid(p.id); setErr('') }}>
+              <button key={p.id} className="login-player" style={{ borderTopColor: meta.teams[p.team].color }} onClick={() => { setPid(p.id); setErr('') }}>
                 <span className="login-name">{p.name}{p.groom ? ' \u{1F935}' : ''}</span>
                 <span className="login-team" style={{ color: meta.teams[p.team].color }}>{meta.teams[p.team].name}</span>
                 <span className="login-claimed">{claimed(p.id) ? 'PIN set' : 'Tap to claim'}</span>

@@ -136,8 +136,8 @@ export const DEFAULT_META = {
   skinsValue: 5,
   skinsNet: true,
   teams: {
-    A: { name: 'Team Miller', color: '#9d2235' },
-    B: { name: 'The Mice', color: '#00558c' },
+    A: { name: 'Team Miller', color: '#e3354d' },
+    B: { name: 'The Mice', color: '#2f6fed' },
   },
   players: PLAYERS,
   courses: COURSES,

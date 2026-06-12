@@ -101,6 +101,7 @@ function ScoreTab({ round, course }) {
             <p>{game}</p>
           </div>
 
+          <div className="scoregrid">
           {group.pids.map(pid => {
             const p = playerById(meta, pid)
             if (!p) return null
@@ -113,6 +114,7 @@ function ScoreTab({ round, course }) {
                 <div className="scorename">
                   <span>{p.name}{p.groom ? ' \u{1F935}' : ''} <span className="popdots">{dots(pops)}</span></span>
                   <span className="scoresub">hcp {hcp}{gross != null ? ` · net ${net}` : ''}</span>
+                  {gross != null && <ScoreFeed gross={gross} par={course.par[hole]} />}
                 </div>
                 <div className="stepper">
                   <button className="stepbtn" onClick={() => setScore(round.id, pid, hole, gross == null ? null : gross - 1 < 1 ? null : gross - 1)}>&minus;</button>
@@ -122,11 +124,21 @@ function ScoreTab({ round, course }) {
               </div>
             )
           })}
+          </div>
           <p className="hint">Tap + on an empty box to start at par. Anyone in the group can keep the card. Scores save automatically.</p>
         </>
       )}
     </div>
   )
+}
+
+function ScoreFeed({ gross, par }) {
+  const d = gross - par
+  if (d <= -2) return <span className="scorefeed under">{'\u{1F985}'} EAGLE!</span>
+  if (d === -1) return <span className="scorefeed under">{'\u{1F525}'} BIRDIE!</span>
+  if (d === 0) return <span className="scorefeed even">{'\u2705'} PAR</span>
+  if (d === 1) return <span className="scorefeed over">BOGEY</span>
+  return <span className="scorefeed over">{'\u{1F480}'} +{d}</span>
 }
 
 function firstOpenHole(data, rid, pids) {
@@ -191,6 +203,7 @@ function MatchesTab({ round, course }) {
         <span className="vs">round points</span>
         <span style={{ color: meta.teams.B.color }}>{fmtPts(pts.B)} {meta.teams.B.name}</span>
       </div>
+      <div className="matchgrid">
       {round.matches.map((m, i) => {
         const st = statuses[i]
         return (
@@ -215,6 +228,7 @@ function MatchesTab({ round, course }) {
           </div>
         )
       })}
+      </div>
     </div>
   )
 }
@@ -320,11 +334,13 @@ function CompsTab({ round, course }) {
     <div>
       <p className="hint">Tap a card to crown a new leader. Whoever holds it when the round ends wins. Honor system, gentlemen.</p>
       <h3 className="sectionh">{'\u{1F3AF}'} Closest to the pin</h3>
+      <div className="compgrid">
       {round.ctpHoles.map(h => (
         <CompCard key={h} kind="ctp" hole={h} entry={comps.ctp?.[h]} unit="ft/in from the cup"
           title={`Hole ${h + 1} · par 3 · ${course.yards[h]} yds`}
           onSave={(entry) => setComp(round.id, 'ctp', h, entry)} />
       ))}
+      </div>
       <h3 className="sectionh">{'\u{1F4A3}'} Longest drive</h3>
       <CompCard kind="ld" hole={round.ldHole} entry={comps.ld?.[round.ldHole]} unit="yards"
         title={`Hole ${round.ldHole + 1} · par ${course.par[round.ldHole]} · ${course.yards[round.ldHole]} yds`}
