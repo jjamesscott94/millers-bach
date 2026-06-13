@@ -52,11 +52,11 @@ data3[`scores:r1:${m1.a[0]}`] = par.map((p, i) => (i < 3 ? p - 1 : null)) // 3 s
 const st3 = matchStatus(data3, 'r1', m1, course)
 check('match live', { done: st3.done, thru: st3.thru, up: st3.up }, { done: false, thru: 3, up: 3 })
 
-// Skins (opt-in): everyone enters except p14. Hole 0: p1 gross 3, rest gross 4
+// Skins (opt-in): everyone enters except p7. Hole 0: p1 gross 3, rest gross 4
 // -> p1 wins skin. Hole 1: all par -> push. Hole 2: p3 unique low -> pot of 2.
-// p14 shoots 1s but is NOT entered, so he can't win anything.
+// p7 shoots 1s but is NOT entered, so he can't win anything.
 const data4 = {}
-const entrants = everyone.filter(pid => pid !== 'p14')
+const entrants = everyone.filter(pid => pid !== 'p7')
 for (const pid of everyone) data4[`prof:${pid}`] = { hcp: 20 }
 for (const pid of entrants) data4[`skinsin:r1:${pid}`] = true
 for (const pid of everyone) {
@@ -66,7 +66,7 @@ for (const pid of everyone) {
 }
 data4['scores:r1:p1'][0] = 3
 data4['scores:r1:p3'][2] = course.par[2] - 1
-data4['scores:r1:p14'] = Array(18).fill(1) // hustler who didn't pay
+data4['scores:r1:p7'] = Array(18).fill(1) // hustler who didn't pay
 const sk = skinsForRound(data4, 'r1', meta, r1)
 check('skin h1 winner', { pid: sk.holes[0].pid, pot: sk.holes[0].pot }, { pid: 'p1', pot: 1 })
 check('skin h2 push', sk.holes[1].state, 'push')
