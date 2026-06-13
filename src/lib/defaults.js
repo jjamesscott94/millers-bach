@@ -94,6 +94,7 @@ export const RULES = [
   'Skins: opt in for the round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
   'Both squads carry 7 men \u2014 each team benches one for the Talon round. Benched men still drink (and can still post a card for skins).',
   'Gimmies inside the leather, unless money or matches are on the line.',
+  'If you puke, strokes come off your net score.',
   'The groom never buys his own drinks. Ever.',
 ]
 
