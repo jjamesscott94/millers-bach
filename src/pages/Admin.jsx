@@ -131,8 +131,7 @@ function LineupsEditor() {
 
 function SlotPickers({ round, ri, mi, side, team }) {
   const { meta, updateMeta } = useStore()
-  const slotCount = round.format === 'fourball' ? Math.max(2, round.matches[mi][side].length) : 1
-  const slots = Array.from({ length: slotCount }, (_, i) => i)
+  const slots = round.format === 'fourball' ? [0, 1] : [0]
   return (
     <span className="slotgroup">
       {slots.map(si => (

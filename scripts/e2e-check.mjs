@@ -20,9 +20,9 @@ await page.goto(URL, { waitUntil: 'networkidle' })
 ok('title', (await page.title()).includes('Miller Cup'))
 await page.waitForTimeout(1500)
 
-// Login screen lists all 13 players
+// Login screen lists all 12 players
 const players = await page.locator('.login-player').count()
-ok(`login shows 13 players (got ${players})`, players === 13)
+ok(`login shows 12 players (got ${players})`, players === 12)
 ok('Luke Miller present', await page.getByText('Luke Miller').first().isVisible())
 
 // Claim a profile (use Pauley to avoid claiming Luke's slot)

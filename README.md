@@ -1,7 +1,7 @@
 # The Miller Cup ⛳
 
 Ryder Cup-style scoring app for Luke Miller's bachelor party golf day —
-Miller & His Mice go to Scottsdale. 13 golfers, one Talon round, skins,
+Miller & His Mice go to Scottsdale. 12 golfers, one Talon round, skins,
 drinking games, and bragging rights.
 
 **Live site:** https://millers-bach.surge.sh
@@ -14,10 +14,11 @@ drinking games, and bragging rights.
 
 3 points up for grabs — first team to **2** takes the Cup.
 
-- **Rosters:** **Team Miller** has 6 and **The Mice** have 7, with Andrew
-  joining one match as the extra. The Commissioner sets pairings.
-- **Handicaps** are seeded from the trip sheet (Pauley starts at 20; Andrew
-  plays at 40). Each man can edit only his own.
+- **Rosters:** 6 a side — **Team Miller** vs **The Mice** — split roughly
+  evenly by handicap. Everybody plays the Talon round. The Commissioner sets
+  pairings.
+- **Handicaps** are seeded from the trip sheet (Pauley had none listed, so he
+  starts at 20). Each man can edit only his own.
 - **Skins** are opt-in per round: $10 buy-in (tap "Buy in" on the round's
   Skins tab; cash settles at the bar). Every hole is 1 skin — lowest unique
   *net* score wins it, ties carry forward. Each round's pot (buy-ins ×
