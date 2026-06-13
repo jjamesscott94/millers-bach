@@ -45,23 +45,21 @@ export const COURSES = {
   },
 }
 
-// The 14 golfers from the "Miller and his Mice go to Scottsdale" sheet
-// (everyone marked Yes for golf; Benny, Kyle, and TJ are not playing).
-// Handicaps come from the HC column; Andrew and Pauley had none listed so
-// they start at the default 20 (each man can edit his own in the app).
-// Teams are split 7v7 and roughly balanced by handicap.
+// The 12 golfers from the "Miller and his Mice go to Scottsdale" sheet
+// (Brad, Pauley, Benny, Kyle, and TJ are not playing).
+// Handicaps come from the HC column; Andrew had none listed so he starts at
+// the default 20 (each man can edit his own in the app).
+// Teams are split 6v6 and roughly balanced by handicap.
 export const PLAYERS = [
   { id: 'p1', name: 'Luke Miller', team: 'A', groom: true, hcp: 18 },
-  { id: 'p2', name: 'Brad', team: 'A', hcp: 15 },
   { id: 'p3', name: 'Brandon', team: 'A', hcp: 20 },
   { id: 'p4', name: 'Charles', team: 'A', hcp: 11 },
   { id: 'p5', name: 'Connor', team: 'A', hcp: 25 },
   { id: 'p6', name: 'Ryan', team: 'A', hcp: 13 },
-  { id: 'p7', name: 'Pauley', team: 'A', hcp: 20 },
+  { id: 'p11', name: 'Noodle', team: 'A', hcp: 19 },
   { id: 'p8', name: 'John', team: 'B', hcp: 8 },
   { id: 'p9', name: 'Matt Collins', team: 'B', hcp: 11 },
   { id: 'p10', name: 'Nick', team: 'B', hcp: 25 },
-  { id: 'p11', name: 'Noodle', team: 'B', hcp: 19 },
   { id: 'p12', name: 'Simon', team: 'B', hcp: 23 },
   { id: 'p13', name: 'Maline', team: 'B', hcp: 18 },
   { id: 'p14', name: 'Andrew', team: 'B', hcp: 20 },
@@ -89,10 +87,10 @@ export const GAMES = [
 ]
 
 export const RULES = [
-  'Handicaps come from the trip sheet (Andrew and Pauley start at 20). Only YOU can edit your own \u2014 Me tab.',
+  'Handicaps come from the trip sheet (Andrew starts at 20). Only YOU can edit your own \u2014 Me tab.',
   'Match play: net best-ball in the pairs round. Full handicap strokes by hole index.',
   'Skins: opt in for the round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
-  'Both squads carry 7 men \u2014 each team benches one for the Talon round. Benched men still drink (and can still post a card for skins).',
+  'Both squads carry 6 men \u2014 everybody plays the Talon round.',
   'Gimmies inside the leather, unless money or matches are on the line.',
   'If you puke, strokes come off your net score.',
   'The groom never buys his own drinks. Ever.',
@@ -109,12 +107,12 @@ export function longestPar5(course) {
   return best >= 0 ? best : 0
 }
 
-// One-day Talon pairings: each side benches one man for three four-ball matches.
+// One-day Talon pairings for the 12-man field.
 const MATCHES = {
   r1: [
-    { id: 'r1m1', a: ['p1', 'p2'], b: ['p10', 'p9'] },
-    { id: 'r1m2', a: ['p3', 'p4'], b: ['p8', 'p11'] },
-    { id: 'r1m3', a: ['p5', 'p6'], b: ['p12', 'p13'] },
+    { id: 'r1m1', a: ['p5', 'p4'], b: ['p10', 'p9'] },
+    { id: 'r1m2', a: ['p3', 'p6'], b: ['p12', 'p8'] },
+    { id: 'r1m3', a: ['p1', 'p11'], b: ['p14', 'p13'] },
   ],
 }
 
@@ -144,7 +142,7 @@ export const DEFAULT_META = {
   courses: COURSES,
   rounds: [
     // 3 points up for grabs. First to 2 lifts the Cup.
-    round('r1', 'Round 1 \u00b7 Grayhawk Talon', 'Saturday, June 13 \u00b7 On the course', 'talon', 'fourball', ['p7', 'p14']),
+    round('r1', 'Round 1 \u00b7 Grayhawk Talon', 'Saturday, June 13 \u00b7 On the course', 'talon', 'fourball', []),
   ],
   games: GAMES,
   rules: RULES,

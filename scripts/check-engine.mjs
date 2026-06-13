@@ -24,7 +24,7 @@ const r1 = meta.rounds[0]
 const course = meta.courses[r1.course]
 const data = {}
 const everyone = meta.players.map(p => p.id)
-// all 13 at hcp 20
+// all 12 at hcp 20
 for (const pid of everyone) data[`prof:${pid}`] = { hcp: 20 }
 
 // Four-ball test using r1m1: A pair shoots par, B pair shoots bogey on every
@@ -53,7 +53,7 @@ const st3 = matchStatus(data3, 'r1', m1, course)
 check('match live', { done: st3.done, thru: st3.thru, up: st3.up }, { done: false, thru: 3, up: 3 })
 
 // Skins (opt-in): everyone enters except p14. Hole 0: p1 gross 3, rest gross 4
-// -> p1 wins skin. Hole 1: all par -> push. Hole 2: p2 unique low -> pot of 2.
+// -> p1 wins skin. Hole 1: all par -> push. Hole 2: p3 unique low -> pot of 2.
 // p14 shoots 1s but is NOT entered, so he can't win anything.
 const data4 = {}
 const entrants = everyone.filter(pid => pid !== 'p14')
@@ -65,26 +65,26 @@ for (const pid of everyone) {
   data4[`scores:r1:${pid}`] = sc
 }
 data4['scores:r1:p1'][0] = 3
-data4['scores:r1:p2'][2] = course.par[2] - 1
+data4['scores:r1:p3'][2] = course.par[2] - 1
 data4['scores:r1:p14'] = Array(18).fill(1) // hustler who didn't pay
 const sk = skinsForRound(data4, 'r1', meta, r1)
 check('skin h1 winner', { pid: sk.holes[0].pid, pot: sk.holes[0].pot }, { pid: 'p1', pot: 1 })
 check('skin h2 push', sk.holes[1].state, 'push')
-check('skin h3 carry pot', { pid: sk.holes[2].pid, pot: sk.holes[2].pot }, { pid: 'p2', pot: 2 })
-check('skin totals (non-entrant excluded)', sk.totals, { p1: 1, p2: 2 })
+check('skin h3 carry pot', { pid: sk.holes[2].pid, pot: sk.holes[2].pot }, { pid: 'p3', pot: 2 })
+check('skin totals (non-entrant excluded)', sk.totals, { p1: 1, p3: 2 })
 check('skin pending h4', sk.holes[3].state, 'pending')
 
-// Pool math: 13 entrants x $10 = $130 pot; 3 skins claimed -> p1 gets 1/3, p2 gets 2/3
+// Pool math: 11 entrants x $10 = $110 pot; 3 skins claimed -> p1 gets 1/3, p3 gets 2/3
 const pool = skinsPool(data4, meta, r1)
-check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 13, pot: 130, claimed: 3 })
-check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p2: Math.round(pool.payouts.p2 * 100) / 100 }, { p1: 43.33, p2: 86.67 })
-check('fmtMoney', [fmtMoney(130), fmtMoney(43.333333)], ['$130', '$43.33'])
+check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 11, pot: 110, claimed: 3 })
+check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p3: Math.round(pool.payouts.p3 * 100) / 100 }, { p1: 36.67, p3: 73.33 })
+check('fmtMoney', [fmtMoney(110), fmtMoney(36.666666)], ['$110', '$36.67'])
 
 // Nobody entered -> no skins awarded no matter the scores
 const sk0 = skinsForRound({ ...data4, 'skinsin:r1:p1': false, ...Object.fromEntries(entrants.map(p => [`skinsin:r1:${p}`, false])) }, 'r1', meta, r1)
 check('no entrants, no skins', sk0.totals, {})
 
-// Drink totals: p1 drinks on r1 holes 1+3; p2 stays dry
+// Drink totals: p1 drinks on r1 holes 1+3; p3 stays dry
 const data5 = {}
 data5['drinks:r1:p1'] = [2, 0, 1, ...Array(15).fill(0)]
 const dt = drinkTotals(data5, meta)

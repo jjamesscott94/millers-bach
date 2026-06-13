@@ -75,7 +75,7 @@ function LineupsEditor() {
   return (
     <div className="card">
       <h3>Lineups &amp; matchups</h3>
-      <p className="hint">Pick who sits for the Talon round (the 7-man squad subs one out), then set the pairings.</p>
+      <p className="hint">Set the Talon pairings. Use optional sit-outs only if someone else drops.</p>
       {meta.rounds.map((round, ri) => (
         <div key={round.id} className="adminround">
           <h4>{round.name} <span className="hint">({round.format === 'fourball' ? '2v2 best ball \u00d73' : `singles \u00d7${round.matches.length}`})</span></h4>

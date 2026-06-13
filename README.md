@@ -1,7 +1,7 @@
 # The Miller Cup ⛳
 
 Ryder Cup-style scoring app for Luke Miller's bachelor party golf day —
-Miller & His Mice go to Scottsdale. 14 golfers, one Talon round, skins,
+Miller & His Mice go to Scottsdale. 12 golfers, one Talon round, skins,
 drinking games, and bragging rights.
 
 **Live site:** https://millers-bach.surge.sh
@@ -14,11 +14,11 @@ drinking games, and bragging rights.
 
 3 points up for grabs — first team to **2** takes the Cup.
 
-- **Rosters:** 7 a side — **Team Miller** vs **The Mice** — split roughly
-  evenly by handicap. Each team benches one man for the Talon round. The
-  Commissioner sets benches and pairings.
-- **Handicaps** are seeded from the trip sheet (Andrew and Pauley had none
-  listed, so they start at 20). Each man can edit only his own.
+- **Rosters:** 6 a side — **Team Miller** vs **The Mice** — split roughly
+  evenly by handicap. Everybody plays the Talon round. The Commissioner sets
+  pairings.
+- **Handicaps** are seeded from the trip sheet (Andrew had none listed, so he
+  starts at 20). Each man can edit only his own.
 - **Skins** are opt-in per round: $10 buy-in (tap "Buy in" on the round's
   Skins tab; cash settles at the bar). Every hole is 1 skin — lowest unique
   *net* score wins it, ties carry forward. Each round's pot (buy-ins ×
@@ -41,8 +41,8 @@ drinking games, and bragging rights.
 
 Unlock from the **Me** tab. Initial PIN: **1313** — change it right away.
 The Commissioner can rename players, move guys between teams, change the round
-course, set benches and matchups, reset forgotten PINs, edit handicaps, change
-skin values, and wipe a round's scores.
+course, set matchups, reset forgotten PINs, edit handicaps, change skin values,
+and wipe a round's scores.
 
 ## Tech notes
 
