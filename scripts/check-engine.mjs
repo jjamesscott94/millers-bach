@@ -21,7 +21,7 @@ check('hcp9 SI10', strokesOnHole(9, 10), 0)
 
 const meta = DEFAULT_META
 const r1 = meta.rounds[0]
-const course = meta.courses.raptor
+const course = meta.courses[r1.course]
 const data = {}
 const everyone = meta.players.map(p => p.id)
 // all 13 at hcp 20
@@ -74,28 +74,27 @@ check('skin h3 carry pot', { pid: sk.holes[2].pid, pot: sk.holes[2].pot }, { pid
 check('skin totals (non-entrant excluded)', sk.totals, { p1: 1, p2: 2 })
 check('skin pending h4', sk.holes[3].state, 'pending')
 
-// Pool math: 13 entrants x $5 = $65 pot; 3 skins claimed -> p1 gets 1/3, p2 gets 2/3
+// Pool math: 13 entrants x $10 = $130 pot; 3 skins claimed -> p1 gets 1/3, p2 gets 2/3
 const pool = skinsPool(data4, meta, r1)
-check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 13, pot: 65, claimed: 3 })
-check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p2: Math.round(pool.payouts.p2 * 100) / 100 }, { p1: 21.67, p2: 43.33 })
-check('fmtMoney', [fmtMoney(65), fmtMoney(21.666666)], ['$65', '$21.67'])
+check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 13, pot: 130, claimed: 3 })
+check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p2: Math.round(pool.payouts.p2 * 100) / 100 }, { p1: 43.33, p2: 86.67 })
+check('fmtMoney', [fmtMoney(130), fmtMoney(43.333333)], ['$130', '$43.33'])
 
 // Nobody entered -> no skins awarded no matter the scores
 const sk0 = skinsForRound({ ...data4, 'skinsin:r1:p1': false, ...Object.fromEntries(entrants.map(p => [`skinsin:r1:${p}`, false])) }, 'r1', meta, r1)
 check('no entrants, no skins', sk0.totals, {})
 
-// Drink totals: p1 drinks on r1 holes 1+3 and r2 hole 2; p2 stays dry
+// Drink totals: p1 drinks on r1 holes 1+3; p2 stays dry
 const data5 = {}
 data5['drinks:r1:p1'] = [2, 0, 1, ...Array(15).fill(0)]
-data5['drinks:r2:p1'] = [0, 3, ...Array(16).fill(0)]
 const dt = drinkTotals(data5, meta)
 check('drink round totals', dt.byRound.r1, { p1: 3 })
-check('drink weekend total', dt.total, { p1: 6 })
+check('drink event total', dt.total, { p1: 3 })
 
 // cup tally over the full default meta with data: only r1m1 decided (10&8 from data)
-// 3 + 3 + 7 matches = 13 points, first to 7
+// 3 matches = 3 points, first to 2
 const tally = cupTally(data, meta)
-check('cup tally', { A: tally.solid.A, B: tally.solid.B, total: tally.total, toWin: tally.toWin }, { A: 1, B: 0, total: 13, toWin: 7 })
+check('cup tally', { A: tally.solid.A, B: tally.solid.B, total: tally.total, toWin: tally.toWin }, { A: 1, B: 0, total: 3, toWin: 2 })
 
 if (failures) { console.error(`\n${failures} failure(s)`); process.exit(1) }
 console.log('\nAll engine checks passed.')

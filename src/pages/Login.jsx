@@ -57,7 +57,7 @@ export default function Login() {
           <p className="hint">
             {resetting
               ? 'Pick a new 4+ digit PIN \u2014 it replaces the old one. Resetting a buddy\u2019s PIN to mess with him is a 2-drink penalty.'
-              : claimed(pid) ? 'Enter your PIN.' : 'First time in \u2014 set a 4+ digit PIN you\u2019ll remember all weekend.'}
+              : claimed(pid) ? 'Enter your PIN.' : 'First time in \u2014 set a 4+ digit PIN you\u2019ll remember all day.'}
           </p>
           <input
             autoFocus type="password" inputMode="numeric" placeholder={resetting ? 'New PIN' : 'PIN'}

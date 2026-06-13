@@ -373,7 +373,7 @@ function GamesTab({ round }) {
           ? <p className="hint">Bone dry so far. Log drinks with the {'\u{1F37A}'} +/&minus; on each player&rsquo;s scorecard row &mdash; totals land here.</p>
           : (
             <table className="table">
-              <thead><tr><th>Player</th><th className="num">This round</th><th className="num">Weekend</th></tr></thead>
+              <thead><tr><th>Player</th><th className="num">This round</th><th className="num">Event</th></tr></thead>
               <tbody>
                 {rank.map(([pid, n]) => (
                   <tr key={pid}>

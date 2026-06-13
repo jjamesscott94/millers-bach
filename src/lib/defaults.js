@@ -6,7 +6,7 @@ export const BUCKET = 'ECN7GoJ8wGh3CkgXDF7Cxm'
 export const API_BASE = `https://kvdb.io/${BUCKET}`
 
 // Yardages are the Palo Verde (middle) tees at Grayhawk and the standard
-// resort cards at Pebble / Pinehurst.
+// resort cards for the simulator courses.
 export const COURSES = {
   raptor: {
     name: 'Grayhawk \u00b7 Raptor',
@@ -82,7 +82,7 @@ export const GAMES = [
   'Beach Day \u2014 find a bunker, take a drink. Leave it in the bunker, take two.',
   'Lucky 13 \u2014 par or better and everyone else drinks. Bogey or worse, you drink.',
   'Dealer\u2019s Choice \u2014 winner of the last hole invents a rule for this hole.',
-  'Splash Zone \u2014 water ball = chug. (Sim rounds: any penalty counts.)',
+  'Splash Zone \u2014 water ball = chug. Any penalty counts.',
   'Mulligan Market \u2014 mulligans for sale on this hole. Price: 2 drinks each.',
   'One Club Wonder \u2014 play the whole hole with one club, or take 3 drinks.',
   'Last Call \u2014 losing team on the hole shotguns. Groom finishes his drink and gets carried to the bar.',
@@ -90,10 +90,9 @@ export const GAMES = [
 
 export const RULES = [
   'Handicaps come from the trip sheet (Andrew and Pauley start at 20). Only YOU can edit your own \u2014 Me tab.',
-  'Match play: net best-ball in the pairs rounds, net singles in the finale. Full handicap strokes by hole index.',
-  'Skins: opt in each round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
-  'Both squads carry 7 men \u2014 each team benches one for the pairs rounds, everybody plays Sunday singles. Benched men still drink (and can still post a card for skins).',
-  'Groups rotate every round \u2014 new partner in Round 2, a fresh opponent in Sunday singles. Make new friends.',
+  'Match play: net best-ball in the pairs round. Full handicap strokes by hole index.',
+  'Skins: opt in for the round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
+  'Both squads carry 7 men \u2014 each team benches one for the Talon round. Benched men still drink (and can still post a card for skins).',
   'Gimmies inside the leather, unless money or matches are on the line.',
   'The groom never buys his own drinks. Ever.',
 ]
@@ -109,27 +108,12 @@ export function longestPar5(course) {
   return best >= 0 ? best : 0
 }
 
-// Pairings rotate every round: nobody partners the same man twice, and the
-// singles draw gives everyone a fresh opponent. Luke anchors the last match.
+// One-day Talon pairings: each side benches one man for three four-ball matches.
 const MATCHES = {
   r1: [
     { id: 'r1m1', a: ['p1', 'p2'], b: ['p10', 'p9'] },
     { id: 'r1m2', a: ['p3', 'p4'], b: ['p8', 'p11'] },
     { id: 'r1m3', a: ['p5', 'p6'], b: ['p12', 'p13'] },
-  ],
-  r2: [
-    { id: 'r2m1', a: ['p1', 'p4'], b: ['p8', 'p12'] },
-    { id: 'r2m2', a: ['p3', 'p6'], b: ['p9', 'p11'] },
-    { id: 'r2m3', a: ['p2', 'p7'], b: ['p10', 'p14'] },
-  ],
-  r3: [
-    { id: 'r3m1', a: ['p2'], b: ['p12'] },
-    { id: 'r3m2', a: ['p4'], b: ['p14'] },
-    { id: 'r3m3', a: ['p5'], b: ['p8'] },
-    { id: 'r3m4', a: ['p7'], b: ['p9'] },
-    { id: 'r3m5', a: ['p6'], b: ['p10'] },
-    { id: 'r3m6', a: ['p3'], b: ['p13'] },
-    { id: 'r3m7', a: ['p1'], b: ['p11'] },
   ],
 }
 
@@ -147,7 +131,7 @@ export const DEFAULT_META = {
   v: 2,
   eventName: 'The Miller Cup',
   subtitle: 'Miller & His Mice Go to Scottsdale',
-  dates: 'June 12\u201314, 2026',
+  dates: 'June 13, 2026',
   skinsValue: 5,
   skinsBuyIn: 10,
   skinsNet: true,
@@ -158,10 +142,8 @@ export const DEFAULT_META = {
   players: PLAYERS,
   courses: COURSES,
   rounds: [
-    // 3 + 3 + 7 = 13 points. First to 7 lifts the Cup.
-    round('r1', 'Round 1 \u00b7 Grayhawk', 'Saturday, June 13 \u00b7 On the course', 'raptor', 'fourball', ['p7', 'p14']),
-    round('r2', 'Round 2 \u00b7 Shinnecock Hills', 'Simulator session \u00b7 2026 U.S. Open venue', 'shinnecock', 'fourball', ['p5', 'p13']),
-    round('r3', 'Round 3 \u00b7 Pinehurst No. 2', 'Simulator \u00b7 Sunday Singles', 'pinehurst', 'singles', []),
+    // 3 points up for grabs. First to 2 lifts the Cup.
+    round('r1', 'Round 1 \u00b7 Grayhawk Talon', 'Saturday, June 13 \u00b7 On the course', 'talon', 'fourball', ['p7', 'p14']),
   ],
   games: GAMES,
   rules: RULES,

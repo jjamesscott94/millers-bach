@@ -32,7 +32,7 @@ await page.getByRole('button', { name: /claim profile|log in/i }).click()
 await page.waitForTimeout(2000)
 ok('dashboard scoreboard visible', await page.locator('.scoreboard').isVisible())
 ok('masthead shows', await page.locator('.masthead-title').isVisible())
-ok('rounds listed', (await page.locator('.roundcard').count()) === 3)
+ok('rounds listed', (await page.locator('.roundcard').count()) === 1)
 
 // Enter scores on Round 1
 await page.locator('.roundcard').first().click()

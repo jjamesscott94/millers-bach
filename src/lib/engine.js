@@ -166,7 +166,7 @@ export function skinsPool(data, meta, round) {
   return { entrants, pot, holes, totals, carryLeft, claimed, payouts }
 }
 
-// Weekend totals: skins counts and projected dollars across all rounds.
+// Event totals: skins counts and projected dollars across all rounds.
 export function skinsTotalsAllRounds(data, meta) {
   const totals = {}
   const money = {}
@@ -184,7 +184,7 @@ export function getDrinks(data, rid, pid) {
   return Array.isArray(d) ? d : Array(18).fill(0)
 }
 
-// Per-round and weekend drink totals per player.
+// Per-round and event drink totals per player.
 export function drinkTotals(data, meta) {
   const byRound = {}
   const total = {}

@@ -1,8 +1,8 @@
 # The Miller Cup ⛳
 
-Ryder Cup-style scoring app for Luke Miller's bachelor party golf weekend —
-Miller & His Mice go to Scottsdale. 14 golfers, 3 rounds, skins, drinking
-games, and bragging rights.
+Ryder Cup-style scoring app for Luke Miller's bachelor party golf day —
+Miller & His Mice go to Scottsdale. 14 golfers, one Talon round, skins,
+drinking games, and bragging rights.
 
 **Live site:** https://millers-bach.surge.sh
 
@@ -10,15 +10,13 @@ games, and bragging rights.
 
 | Round | Course | Where | Format |
 |---|---|---|---|
-| 1 | Grayhawk (Raptor by default — Talon selectable) | Real life — Sat, June 13 | Four-ball (2v2 net best ball), 3 matches |
-| 2 | Shinnecock Hills (2026 U.S. Open venue) | Simulator | Four-ball, 3 matches |
-| 3 | Pinehurst No. 2 | Simulator | Sunday singles (1v1), 7 matches |
+| 1 | Grayhawk Talon | Real life — Sat, June 13 | Four-ball (2v2 net best ball), 3 matches |
 
-13 points up for grabs — first team to **7** takes the Cup.
+3 points up for grabs — first team to **2** takes the Cup.
 
 - **Rosters:** 7 a side — **Team Miller** vs **The Mice** — split roughly
-  evenly by handicap. Each team benches one man in the pairs rounds;
-  everybody plays Sunday singles. The Commissioner sets benches and pairings.
+  evenly by handicap. Each team benches one man for the Talon round. The
+  Commissioner sets benches and pairings.
 - **Handicaps** are seeded from the trip sheet (Andrew and Pauley had none
   listed, so they start at 20). Each man can edit only his own.
 - **Skins** are opt-in per round: $10 buy-in (tap "Buy in" on the round's
@@ -42,9 +40,9 @@ games, and bragging rights.
 ## Commissioner
 
 Unlock from the **Me** tab. Initial PIN: **1313** — change it right away.
-The Commissioner can rename players, move guys between teams, switch Round 1
-between Raptor and Talon, set benches and matchups, reset forgotten PINs,
-edit handicaps, change skin values, and wipe a round's scores.
+The Commissioner can rename players, move guys between teams, change the round
+course, set benches and matchups, reset forgotten PINs, edit handicaps, change
+skin values, and wipe a round's scores.
 
 ## Tech notes
 
@@ -64,5 +62,5 @@ edit handicaps, change skin values, and wipe a round's scores.
   touching scores). `npm run dev` for local dev,
   `node scripts/check-engine.mjs` for scoring-engine tests,
   `node scripts/e2e-check.mjs` for a live-site smoke test (Playwright).
-- This is a weekend party app: auth is PIN-on-the-honor-system, and anyone
+- This is a party app: auth is PIN-on-the-honor-system, and anyone
   with the bucket ID could write to it. Don't run a major championship on it.

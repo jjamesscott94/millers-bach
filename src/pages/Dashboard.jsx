@@ -80,7 +80,7 @@ export default function Dashboard() {
       <h2 className="sectionh">Drink leaderboard</h2>
       <div className="card">
         {drinkRank.length === 0 ? (
-          <p className="hint">Nobody&rsquo;s logged a drink yet. Track them with the {'\u{1F37A}'} buttons on the scorecard &mdash; weekend totals stack up here.</p>
+          <p className="hint">Nobody&rsquo;s logged a drink yet. Track them with the {'\u{1F37A}'} buttons on the scorecard &mdash; event totals stack up here.</p>
         ) : (
           <table className="table">
             <tbody>
