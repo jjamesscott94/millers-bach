@@ -17,8 +17,8 @@ drinking games, and bragging rights.
 - **Rosters:** 6 a side — **Team Miller** vs **The Mice** — split roughly
   evenly by handicap. Everybody plays the Talon round. The Commissioner sets
   pairings.
-- **Handicaps** are seeded from the trip sheet (Pauley had none listed, so he
-  starts at 20). Each man can edit only his own.
+- **Handicaps** are seeded from the trip sheet (Pauley/Andrew starts at 20).
+  Each man can edit only his own.
 - **Skins** are opt-in per round: $10 buy-in (tap "Buy in" on the round's
   Skins tab; cash settles at the bar). Every hole is 1 skin — lowest unique
   *net* score wins it, ties carry forward. Each round's pot (buy-ins ×
