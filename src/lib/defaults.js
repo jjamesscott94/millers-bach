@@ -45,11 +45,11 @@ export const COURSES = {
   },
 }
 
-// The 12 golfers from the "Miller and his Mice go to Scottsdale" sheet
-// (Brad, Andrew, Benny, Kyle, and TJ are not playing).
-// Handicaps come from the HC column; Pauley had none listed so he starts at
-// the default 20 (each man can edit his own in the app).
-// Teams are split 6v6 and roughly balanced by handicap.
+// The 13 golfers from the "Miller and his Mice go to Scottsdale" sheet
+// (Brad, Benny, Kyle, and TJ are not playing).
+// Handicaps come from the HC column; Pauley starts at the default 20 and
+// Andrew plays at 40 (each man can edit his own in the app).
+// Team Miller has 6 and The Mice have 7, with Andrew joining one match as the extra.
 export const PLAYERS = [
   { id: 'p1', name: 'Luke Miller', team: 'A', groom: true, hcp: 18 },
   { id: 'p3', name: 'Brandon', team: 'A', hcp: 20 },
@@ -63,6 +63,7 @@ export const PLAYERS = [
   { id: 'p12', name: 'Simon', team: 'B', hcp: 23 },
   { id: 'p13', name: 'Maline', team: 'B', hcp: 18 },
   { id: 'p7', name: 'Pauley', team: 'B', hcp: 20 },
+  { id: 'p14', name: 'Andrew', team: 'B', hcp: 40 },
 ]
 
 export const GAMES = [
@@ -87,10 +88,10 @@ export const GAMES = [
 ]
 
 export const RULES = [
-  'Handicaps come from the trip sheet (Pauley starts at 20). Only YOU can edit your own \u2014 Me tab.',
+  'Handicaps come from the trip sheet (Pauley starts at 20; Andrew plays at 40). Only YOU can edit your own \u2014 Me tab.',
   'Match play: net best-ball in the pairs round. Full handicap strokes by hole index.',
   'Skins: opt in for the round ($10 buy-in, Skins tab). Every hole = 1 skin, lowest NET wins it OUTRIGHT, ties ride onto the next hole. The round\u2019s pot splits across all skins won \u2014 no skins, money back.',
-  'Both squads carry 6 men \u2014 everybody plays the Talon round.',
+  'Team Miller has 6 and The Mice have 7 \u2014 Andrew joins one match as the extra.',
   'Gimmies inside the leather, unless money or matches are on the line.',
   'If you puke, strokes come off your net score.',
   'The groom never buys his own drinks. Ever.',
@@ -112,7 +113,7 @@ const MATCHES = {
   r1: [
     { id: 'r1m1', a: ['p5', 'p4'], b: ['p10', 'p9'] },
     { id: 'r1m2', a: ['p3', 'p6'], b: ['p12', 'p8'] },
-    { id: 'r1m3', a: ['p1', 'p11'], b: ['p7', 'p13'] },
+    { id: 'r1m3', a: ['p1', 'p11'], b: ['p7', 'p13', 'p14'] },
   ],
 }
 

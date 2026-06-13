@@ -24,7 +24,7 @@ const r1 = meta.rounds[0]
 const course = meta.courses[r1.course]
 const data = {}
 const everyone = meta.players.map(p => p.id)
-// all 12 at hcp 20
+// all 13 at hcp 20
 for (const pid of everyone) data[`prof:${pid}`] = { hcp: 20 }
 
 // Four-ball test using r1m1: A pair shoots par, B pair shoots bogey on every
@@ -74,11 +74,11 @@ check('skin h3 carry pot', { pid: sk.holes[2].pid, pot: sk.holes[2].pot }, { pid
 check('skin totals (non-entrant excluded)', sk.totals, { p1: 1, p3: 2 })
 check('skin pending h4', sk.holes[3].state, 'pending')
 
-// Pool math: 11 entrants x $10 = $110 pot; 3 skins claimed -> p1 gets 1/3, p3 gets 2/3
+// Pool math: 12 entrants x $10 = $120 pot; 3 skins claimed -> p1 gets 1/3, p3 gets 2/3
 const pool = skinsPool(data4, meta, r1)
-check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 11, pot: 110, claimed: 3 })
-check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p3: Math.round(pool.payouts.p3 * 100) / 100 }, { p1: 36.67, p3: 73.33 })
-check('fmtMoney', [fmtMoney(110), fmtMoney(36.666666)], ['$110', '$36.67'])
+check('pool pot', { entrants: pool.entrants.length, pot: pool.pot, claimed: pool.claimed }, { entrants: 12, pot: 120, claimed: 3 })
+check('pool payouts', { p1: Math.round(pool.payouts.p1 * 100) / 100, p3: Math.round(pool.payouts.p3 * 100) / 100 }, { p1: 40, p3: 80 })
+check('fmtMoney', [fmtMoney(120), fmtMoney(40)], ['$120', '$40'])
 
 // Nobody entered -> no skins awarded no matter the scores
 const sk0 = skinsForRound({ ...data4, 'skinsin:r1:p1': false, ...Object.fromEntries(entrants.map(p => [`skinsin:r1:${p}`, false])) }, 'r1', meta, r1)
